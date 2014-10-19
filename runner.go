@@ -2,24 +2,24 @@ package expect
 
 import (
 	"flag"
-	"reflect"
-	"regexp"
-	"testing"
 	"fmt"
-	"time"
-	"runtime"
-	"strings"
 	"github.com/wsxiaoys/terminal/color"
 	"os"
+	"reflect"
+	"regexp"
+	"runtime"
+	"strings"
+	"testing"
+	"time"
 )
 
 var (
 	showStdout = flag.Bool("vv", false, "Regular expression selecting which tests to run")
-	matchFlag = flag.String("m", "", "Regular expression selecting which tests to run")
-	pattern *regexp.Regexp
-	runner *Runner
-	stdout = os.Stdout
-	silentOut *os.File
+	matchFlag  = flag.String("m", "", "Regular expression selecting which tests to run")
+	pattern    *regexp.Regexp
+	runner     *Runner
+	stdout     = os.Stdout
+	silentOut  *os.File
 )
 
 func init() {
@@ -43,7 +43,7 @@ func Expectify(suite interface{}, t *testing.T) {
 	for i := 0; i < count; i++ {
 		method := tp.Method(i)
 		name := method.Name
-		if pattern.MatchString(name) == false || method.Type.NumIn() != 1{
+		if pattern.MatchString(name) == false || method.Type.NumIn() != 1 {
 			continue
 		}
 		os.Stdout = stdout
@@ -73,8 +73,8 @@ type Runner struct {
 
 func (r *Runner) Start(name string) *Result {
 	r.current = &Result{
-		method: name,
-		start: time.Now(),
+		method:   name,
+		start:    time.Now(),
 		failures: make([]*Failure, 0, 3),
 	}
 	r.results = append(r.results, r.current)
@@ -123,23 +123,23 @@ func (r *Runner) Errorf(format string, args ...interface{}) {
 	}
 
 	failure := &Failure{
-		message: fmt.Sprintf(format, args...),
+		message:  fmt.Sprintf(format, args...),
 		location: fmt.Sprintf("%s:%d", file, line),
 	}
 	r.current.failures = append(r.current.failures, failure)
 }
 
 type Result struct {
-	method string
-	failures []*Failure
-	start time.Time
-	end time.Time
+	method      string
+	failures    []*Failure
+	start       time.Time
+	end         time.Time
 	skipMessage string
-	skip bool
+	skip        bool
 }
 
 type Failure struct {
-	message string
+	message  string
 	location string
 }
 

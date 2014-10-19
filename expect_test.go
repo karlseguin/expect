@@ -83,10 +83,10 @@ func (e *ExpectTests) Contain_Failures() {
 	})
 
 	failing("[1 2] does not contain 3", 1, func() {
-		Expect([]int{1,2}).To.Contain(3)
+		Expect([]int{1, 2}).To.Contain(3)
 	})
 	failing("[1 2] contains 2", 1, func() {
-		Expect([]int{1,2}).Not.To.Contain(2)
+		Expect([]int{1, 2}).Not.To.Contain(2)
 	})
 
 	failing("map[a:3] does not contain b", 1, func() {
@@ -97,10 +97,10 @@ func (e *ExpectTests) Contain_Failures() {
 	})
 
 	failing("[1 2 3] does not contain [3 4]", 1, func() {
-		Expect([]byte{1, 2, 3}).To.Contain([]byte{3,4})
+		Expect([]byte{1, 2, 3}).To.Contain([]byte{3, 4})
 	})
 	failing("[1 2 3] contains [2 3]", 1, func() {
-		Expect([]byte{1, 2, 3}).Not.To.Contain([]byte{2,3})
+		Expect([]byte{1, 2, 3}).Not.To.Contain([]byte{2, 3})
 	})
 }
 
@@ -134,11 +134,11 @@ func (e *ExpectTests) ExpectNil_Success() {
 
 func (e *ExpectTests) ExpectNil_Failure() {
 	var t *ExpectTests
-	failing("expected <nil> to be equal to 44", 2, func(){
+	failing("expected <nil> to be equal to 44", 2, func() {
 		Expect(nil).To.Equal(44)
 		Expect(t).To.Equal(44)
 	})
-	failing("expected <nil> not to equal <nil>", 3, func(){
+	failing("expected <nil> not to equal <nil>", 3, func() {
 		Expect(nil).Not.To.Equal(nil)
 		Expect(nil).Not.To.Equal(t)
 		Expect(t).Not.To.Equal(t)

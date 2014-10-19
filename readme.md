@@ -94,3 +94,7 @@ If you print anything outside of your test, say during `init`, it'll likely be s
 Since `Expect` runs within `go test`, you can mix `Expect` style tests with traditional Go tests. To do this, you'll probably want to run your tests with `-vv` (see *stdout* section above). Even without `-vv`, you *will* get the proper return code (!= 0 on failure).
 
 This also means that `go test` features, such as `-cover`, work with `Expect`. However, `Expect` tests cannot be run in parallel.
+
+# Mocks
+
+`Expect` also exposes a sub-package `mock` which is aimed at providing mock objects and buiders for common standard library components. This is a work in progress

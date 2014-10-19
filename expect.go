@@ -45,7 +45,6 @@ var Errorf = func(format string, args ...interface{}) {
 	runner.Errorf(format, args...)
 }
 
-
 func Expect(actual interface{}, others ...interface{}) *Expectation {
 	return expect(actual, others, true)
 }
@@ -131,7 +130,7 @@ func (e *ToExpectation) Contain(expected interface{}) {
 }
 
 type ToAssertion struct {
-	actual interface{}
+	actual     interface{}
 	comparitor Comparitor
 	display    string
 	invert     bool
@@ -139,9 +138,9 @@ type ToAssertion struct {
 
 func newToAssertion(a interface{}, c Comparitor, display string) *ToAssertion {
 	return &ToAssertion{
-		actual: a,
-		comparitor:     c,
-		display:        display,
+		actual:     a,
+		comparitor: c,
+		display:    display,
 	}
 }
 

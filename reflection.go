@@ -23,10 +23,10 @@ func IsNil(a interface{}) bool {
 	}
 	value := reflect.ValueOf(a)
 	switch value.Kind() {
-		case reflect.Chan, reflect.Func, reflect.Interface:
-			fallthrough
-		case reflect.Ptr, reflect.Map, reflect.Slice:
-			return value.IsNil()
+	case reflect.Chan, reflect.Func, reflect.Interface:
+		fallthrough
+	case reflect.Ptr, reflect.Map, reflect.Slice:
+		return value.IsNil()
 	}
 	return false
 }
