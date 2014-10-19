@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-type SingleExpectation struct {
+type Expectation struct {
 	actual         interface{}
 	others         []interface{}
 	Greater        *ThanAssertion
@@ -18,19 +18,19 @@ type SingleExpectation struct {
 }
 
 type InvertedExpectation struct {
-	*SingleExpectation
+	*Expectation
 }
 
 var Errorf = func(format string, args ...interface{}) {
 	runner.Errorf(format, args...)
 }
 
-func Expect(actual interface{}, others ...interface{}) *SingleExpectation {
+func Expect(actual interface{}, others ...interface{}) *Expectation {
 	return expect(actual, others, true)
 }
 
-func expect(actual interface{}, others []interface{}, includeNot bool) *SingleExpectation {
-	e := &SingleExpectation{actual: actual, others: others}
+func expect(actual interface{}, others []interface{}, includeNot bool) *Expectation {
+	e := &Expectation{actual: actual, others: others}
 	e.Greater = newThanAssertion(actual, GreaterThanComparitor, "to be greater than", "greater than")
 	e.GreaterOrEqual = newToAssertion(actual, GreaterOrEqualToComparitor, "to be greater or equal to")
 	e.Less = newThanAssertion(actual, LessThanComparitor, "to be less than", "less than")
