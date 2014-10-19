@@ -14,7 +14,7 @@ func Test_Expect(t *testing.T) {
 }
 
 func (e *ExpectTests) Equal_Success() {
-	Expect("abc").To.Equal("ab2")
+	Expect("abc").To.Equal("abc")
 	Expect(true).To.Equal(true)
 	Expect(false).To.Equal(false)
 	Expect([]int{1, 2, 3}).To.Equal([]int{1, 2, 3})
@@ -143,6 +143,22 @@ func (e *ExpectTests) ExpectNil_Failure() {
 		Expect(nil).Not.To.Equal(t)
 		Expect(t).Not.To.Equal(t)
 	})
+}
+
+func (e *ExpectTests) Fail() {
+	failing("the failure reason 123", 1, func() {
+		Fail("the failure reason %d", 123)
+	})
+}
+
+func (e *ExpectTests) Skip_After() {
+	Fail("failed")
+	Skip("the skip reason %d", 9001)
+}
+
+func (e *ExpectTests) Skip_Before() {
+	Skip("the skip reason")
+	Fail("failed")
 }
 
 func failing(expected string, count int, f func()) {

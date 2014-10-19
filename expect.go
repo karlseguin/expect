@@ -29,6 +29,14 @@ func Expect(actual interface{}, others ...interface{}) *Expectation {
 	return expect(actual, others, true)
 }
 
+func Fail(format string, args ...interface{}) {
+	Errorf(format, args...)
+}
+
+func Skip(format string, args ...interface{}) {
+	runner.Skip(format, args...)
+}
+
 func expect(actual interface{}, others []interface{}, includeNot bool) *Expectation {
 	e := &Expectation{actual: actual, others: others}
 	e.Greater = newThanAssertion(actual, GreaterThanComparitor, "to be greater than", "greater than")

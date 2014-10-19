@@ -97,6 +97,12 @@ func (r *Runner) Passed() bool {
 	return true
 }
 
+func (r *Runner) Skip(format string, args ...interface{}) {
+	if r.current != nil {
+		r.current.Skip(format, args...)
+	}
+}
+
 func (r *Runner) Errorf(format string, args ...interface{}) {
 	file := "???"
 	line := 1
@@ -128,6 +134,8 @@ type Result struct {
 	failures []*Failure
 	start time.Time
 	end time.Time
+	skipMessage string
+	skip bool
 }
 
 type Failure struct {
@@ -135,13 +143,21 @@ type Failure struct {
 	location string
 }
 
+func (r *Result) Skip(format string, args ...interface{}) {
+	r.skip = true
+	r.skipMessage = fmt.Sprintf(format, args...)
+}
+
 func (r *Result) Passed() bool {
-	return len(r.failures) == 0
+	return r.skip || len(r.failures) == 0
 }
 
 func (r *Result) Report() {
 	info := fmt.Sprintf(" %-50s\t%fs", r.method, r.end.Sub(r.start).Seconds())
-	if r.Passed() {
+	if r.skip {
+		color.Println(" @y⸚" + info)
+		color.Println("   @." + r.skipMessage)
+	} else if r.Passed() {
 		color.Println(" @g✓" + info)
 	} else {
 		color.Println(" @r×" + info)
