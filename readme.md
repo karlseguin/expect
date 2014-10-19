@@ -22,8 +22,17 @@ func (c *CalculatorTests) AddsTwoNumbers() {
   c := new(Calculator)
   Expect(c.Add(4, 8)).To.Equal(12)
   Expect(c.Add(10, 2)).Greater.Than(11)
+  Expect(c.Add(10, 2)).LessOrEqual.To(12)
   Expect(c.Add(10, 2)).Not.Greater.Than(9000)
   Expect(c.Add(1, 1)).Not.To.Equal(3)
+
+  //OR
+
+  Expect(c.Add(4.8)).ToEqual(12)
+  Expect(c.Add(10, 2)).GreaterThan(11)
+  Expect(c.Add(10, 2)).LessOrEqualTo(12)
+  Expect(c.Add(10, 2)).Not.GreaterThan(9000)
+  Expect(c.Add(1, 1)).Not.ToEqual(3)
 }
 ```
 
@@ -37,13 +46,21 @@ Run tests as you normally would via `go run test`. However, to run specific test
 
 ## Expectations
 
-* `Greater.Than(x)`
-* `GreaterOrEqual.To(x)`
-* `Less.Than(x)`
-* `LessOrEqual.To(x)`
-* `To.Equal(x)`
+Two similar syntaxes of expectations are supported
 
-All expectations can be reversed by starting the chain with `Not.`
+* `To.Equal(x)` or `ToEqual(x)`
+* `Greater.Than(x)` or `GreaterThan(x)`
+* `GreaterOrEqual.To(x)` or `GreaterOrEqualTo(x)`
+* `Less.Than(x)` or `LessThan(x)`
+* `LessOrEqual.To(x)` or `LessOrEqualTo(x)`
+
+All expectations can be reversed by starting the chain with `Not.`:
+
+* `Not.To.Equal(x)` or `Not.ToEqual(x)`
+* `Not.Greater.Than(x)` or `Not.GreaterThan(x)`
+* `Not.GreaterOrEqual.To(x)` or `Not.GreaterOrEqualTo(x)`
+* `Not.Less.Than(x)` or `Not.LessThan(x)`
+* `Not.LessOrEqual.To(x)` or `Not.LessOrEqualTo(x)`
 
 ### Contains
 

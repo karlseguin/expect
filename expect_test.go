@@ -161,6 +161,27 @@ func (e *ExpectTests) Skip_Before() {
 	Fail("failed")
 }
 
+func (e *ExpectTests) AltenrativeSyntax() {
+	Expect(true).ToEqual(true)
+	Expect(123).Not.ToEqual(11)
+	Expect("it's over", 9000).ToEqual("it's over", 9000)
+	Expect("it's not over", 90000).Not.ToEqual("it's over", 9000)
+
+	Expect(94).GreaterThan(93)
+	Expect(94).Not.GreaterThan(94)
+	Expect(94).Not.GreaterThan(95)
+	Expect(94).GreaterOrEqualTo(93)
+	Expect(94).GreaterOrEqualTo(94)
+	Expect(94).Not.GreaterOrEqualTo(95)
+
+	Expect(12).LessThan(13)
+	Expect(12).Not.LessThan(12)
+	Expect(12).Not.LessThan(-1)
+	Expect(12).LessOrEqualTo(12)
+	Expect(12).LessOrEqualTo(12)
+	Expect(12).Not.LessOrEqualTo(1)
+}
+
 func failing(expected string, count int, f func()) {
 	actuals := make([]string, 0, 5)
 	Errorf = func(format string, args ...interface{}) {

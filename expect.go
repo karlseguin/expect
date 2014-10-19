@@ -17,6 +17,26 @@ type Expectation struct {
 	Not            *InvertedExpectation
 }
 
+func (e *Expectation) ToEqual(expected interface{}, others ...interface{}) {
+	e.To.Equal(expected, others...)
+}
+
+func (e *Expectation) GreaterThan(expected interface{}) {
+	e.Greater.Than(expected)
+}
+
+func (e *Expectation) GreaterOrEqualTo(expected interface{}) {
+	e.GreaterOrEqual.To(expected)
+}
+
+func (e *Expectation) LessThan(expected interface{}) {
+	e.Less.Than(expected)
+}
+
+func (e *Expectation) LessOrEqualTo(expected interface{}) {
+	e.LessOrEqual.To(expected)
+}
+
 type InvertedExpectation struct {
 	*Expectation
 }
@@ -24,6 +44,7 @@ type InvertedExpectation struct {
 var Errorf = func(format string, args ...interface{}) {
 	runner.Errorf(format, args...)
 }
+
 
 func Expect(actual interface{}, others ...interface{}) *Expectation {
 	return expect(actual, others, true)
@@ -48,7 +69,7 @@ func expect(actual interface{}, others []interface{}, includeNot bool) *Expectat
 		others: others,
 	}
 	if includeNot {
-		e.Not = NotExpect(actual)
+		e.Not = NotExpect(actual, others...)
 	}
 	return e
 }
