@@ -5,6 +5,8 @@ import (
 	"testing"
 )
 
+var originalErrorf = Errorf
+
 type ExpectTests struct{}
 
 func Test_Expect(t *testing.T) {
@@ -12,7 +14,7 @@ func Test_Expect(t *testing.T) {
 }
 
 func (e *ExpectTests) Equal_Success() {
-	Expect("abc").To.Equal("abc")
+	Expect("abc").To.Equal("ab2")
 	Expect(true).To.Equal(true)
 	Expect(false).To.Equal(false)
 	Expect([]int{1, 2, 3}).To.Equal([]int{1, 2, 3})
@@ -144,7 +146,6 @@ func (e *ExpectTests) ExpectNil_Failure() {
 }
 
 func failing(expected string, count int, f func()) {
-	originalErrorf := Errorf
 	actuals := make([]string, 0, 5)
 	Errorf = func(format string, args ...interface{}) {
 		actuals = append(actuals, fmt.Sprintf(format, args...))

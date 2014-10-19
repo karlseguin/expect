@@ -1,6 +1,8 @@
 # Expect
 
-A library to help you write tests in Go. Wraps Go's testing framework; your workflow stays the same.
+A library to help you write tests in Go.
+
+What's wrong with Go's built-in testing package? Not much, except it tends to lead to verbose code. `Expect` runs within `go test` but provides a different syntax for specifying expectations.
 
 ## Example
 
@@ -62,12 +64,14 @@ However, using `To.Equal` multiple values can be provided:
 
     Expect(1, true, "a").To.Equal(1, true, "a")
 
-## Optional *testing.T
+## stdout
 
-Your tests can optionally accept a `*testing.T` parameter:
+Go's testing package has no hooks into its reporting. `Expect` takes the drastic step of occasionally silencing `os.Stdout`, which many packages uses (such as `fmt.Print`). However, within your test, `os.Stdout` **will** work.
 
-```go
-func (c *CalculatorTests) AddsTwoNumbers(t *testing.T) {
-  ...
-}
-```
+If you print anything outside of your test, say during `init`, it'll likely be silenced by `Expect`. You can disable this behavior with the `-vv` flag (use `-v` and `-vv` in combination to change the behavior of both `Expect` and Go's library)
+
+## Mixing with *testing.T
+
+Since `Expect` runs within `go test`, you can mix `Expect` style tests with traditional Go tests. To do this, you'll probably want to run your tests with `-vv` (see *stdout* section above). Even without `-vv`, you *will* get the proper return code (!= 0 on failure).
+
+This also means that `go test` features, such as `-cover`, work with `Expect`. However, `Expect` tests cannot be run in parallel.

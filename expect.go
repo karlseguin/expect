@@ -6,10 +6,6 @@ import (
 	"strings"
 )
 
-var Errorf = func(format string, args ...interface{}) {
-	t.Errorf(format, args...)
-}
-
 type SingleExpectation struct {
 	actual         interface{}
 	others         []interface{}
@@ -23,6 +19,10 @@ type SingleExpectation struct {
 
 type InvertedExpectation struct {
 	*SingleExpectation
+}
+
+var Errorf = func(format string, args ...interface{}) {
+	runner.Errorf(format, args...)
 }
 
 func Expect(actual interface{}, others ...interface{}) *SingleExpectation {
