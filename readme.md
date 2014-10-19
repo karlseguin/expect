@@ -40,9 +40,9 @@ You can also use `Skip(format, args...)` and `Fail(format, args...)` to either s
 
 ## Running
 
-Run tests as you normally would via `go run test`. However, to run specific tests, use the -m flag, which will do a case-insensitive regular expression match.
+Run tests as you normally would via `go test`. However, to run specific tests, use the -m flag, which will do a case-insensitive regular expression match.
 
-    go run test -m AddsTwo
+    go test -m AddsTwo
 
 ## Expectations
 
