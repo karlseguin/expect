@@ -66,22 +66,37 @@ All expectations can be reversed by starting the chain with `Not.`:
 
 `To.Contain` works with strings, arrays, slices and maps. For arrays and slices, only individual values are matched. For example:
 
-    Expect([]int{1,2,3}).To.Contain([]int{1,2})
+```go
+Expect([]int{1,2,3}).To.Contain([]int{1,2})
+```
 
 will, sadly, not work.
 
 The exception to this is for strings and `[]byte`. These work with either a single value or an array (they use the stdlib's `strings.Contains` and `bytes.Contains`).
 
+## Additional Information
+
+You can add extra information to an error by using the `Message(format string, args ...interface{})` function on an expectation:
+
+```go
+Expect(res.Code).To.Equal(404).Message("path: %s", path)
+```
+
+This can be useful when you're testing the same code against different inputs (probably in a `for` loop).
 
 ## Multiple Values
 
 `Expect` throws away all but the first value. This is convenient when a method returns an error which you don't care to test:
 
-    Expect(ioutil.ReadFile("blah")).To.Equal([]byte{1, 2, 3, 4})
+```go
+Expect(ioutil.ReadFile("blah")).To.Equal([]byte{1, 2, 3, 4})
+```
 
 However, using `To.Equal` multiple values can be provided:
 
-    Expect(1, true, "a").To.Equal(1, true, "a")
+```go
+Expect(1, true, "a").To.Equal(1, true, "a")
+```
 
 ## stdout
 
@@ -97,4 +112,28 @@ This also means that `go test` features, such as `-cover`, work with `Expect`. H
 
 # Mocks
 
-`Expect` also exposes a sub-package `mock` which is aimed at providing mock objects and buiders for common standard library components. This is a work in progress
+The `mock` sub-package provides mock objects and buiders for common standard library components.
+
+**Work in progress**
+
+# Builders
+
+The `build` sub-package provides build helpers for common standard library components. Builders expose a fluent interface for setting various properties. The default object returned from a builder should be safe to use as-is.
+
+**Work in progress**
+
+## http.Request
+
+```go
+req := build.Request().
+        Method("GET").
+        URLString("http://openmymind.net/test").
+        Request
+```
+
+* `Method(method string)`
+* `Proto(major, minor int)`
+* `URL(u *url.URL)`
+* `URLString(url string)` - panics if `url` isn't a valid URL
+* `Path(path string)` - changes the `path` component of the URL only
+* `Host(host string)` - changes the `host` component of the URL only

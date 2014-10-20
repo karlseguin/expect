@@ -17,24 +17,24 @@ type Expectation struct {
 	Not            *InvertedExpectation
 }
 
-func (e *Expectation) ToEqual(expected interface{}, others ...interface{}) {
-	e.To.Equal(expected, others...)
+func (e *Expectation) ToEqual(expected interface{}, others ...interface{}) PostHandler {
+	return e.To.Equal(expected, others...)
 }
 
-func (e *Expectation) GreaterThan(expected interface{}) {
-	e.Greater.Than(expected)
+func (e *Expectation) GreaterThan(expected interface{}) PostHandler {
+	return e.Greater.Than(expected)
 }
 
-func (e *Expectation) GreaterOrEqualTo(expected interface{}) {
-	e.GreaterOrEqual.To(expected)
+func (e *Expectation) GreaterOrEqualTo(expected interface{}) PostHandler {
+	return e.GreaterOrEqual.To(expected)
 }
 
-func (e *Expectation) LessThan(expected interface{}) {
-	e.Less.Than(expected)
+func (e *Expectation) LessThan(expected interface{}) PostHandler {
+	return e.Less.Than(expected)
 }
 
-func (e *Expectation) LessOrEqualTo(expected interface{}) {
-	e.LessOrEqual.To(expected)
+func (e *Expectation) LessOrEqualTo(expected interface{}) PostHandler {
+	return e.LessOrEqual.To(expected)
 }
 
 type InvertedExpectation struct {
@@ -89,44 +89,57 @@ type ToExpectation struct {
 	others []interface{}
 }
 
-func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) {
+func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) PostHandler {
 	display := "to be equal to"
 	if e.invert {
 		display = "to equal"
 	}
 	assertion := newToAssertion(e.actual, EqualsComparitor, display)
 	assertion.invert = e.invert
-	equal(assertion, e.actual, expected)
+	failed := !equal(assertion, e.actual, expected)
 
 	if len(others) != len(e.others) {
 		Errorf("mismatch number of values and expectations %d != %d", len(e.others)+1, len(others)+1)
-		return
+		failed = true
+	} else {
+		for i := 0; i < len(others); i++ {
+			if equal(assertion, e.others[i], others[i]) == false {
+				failed = true
+			}
+		}
 	}
-	for i := 0; i < len(others); i++ {
-		equal(assertion, e.others[i], others[i])
+
+	if failed {
+		return FailureHandler
 	}
+	return SuccessHandler
 }
 
-func equal(assertion *ToAssertion, a, b interface{}) {
+func equal(assertion *ToAssertion, a, b interface{}) bool {
 	aIsNil := IsNil(a)
 	bIsNil := IsNil(b)
 	if aIsNil || bIsNil {
 		if (aIsNil == bIsNil) == assertion.invert {
 			showError(a, b, assertion.invert, assertion.display)
+			return false
 		}
-		return
+		return true
 	}
 	assertion.actual = a
-	assertion.To(b)
+	return assertion.To(b) == SuccessHandler
 }
 
-func (e *ToExpectation) Contain(expected interface{}) {
+func (e *ToExpectation) Contain(expected interface{}) PostHandler {
 	c := contains(e.actual, expected)
 	if e.invert == false && c == false {
 		Errorf("%v does not contain %v", e.actual, expected)
-	} else if e.invert == true && c == true {
-		Errorf("%v contains %v", e.actual, expected)
+		return FailureHandler
 	}
+	if e.invert == true && c == true {
+		Errorf("%v contains %v", e.actual, expected)
+		return FailureHandler
+	}
+	return SuccessHandler
 }
 
 type ToAssertion struct {
@@ -144,12 +157,12 @@ func newToAssertion(a interface{}, c Comparitor, display string) *ToAssertion {
 	}
 }
 
-func (a *ToAssertion) To(expected interface{}) {
+func (a *ToAssertion) To(expected interface{}) PostHandler {
 	actual := a.actual
 	kind, ok := SameKind(actual, expected)
 	if ok == false {
 		Errorf("expected %v %s %v - type mismatch %s != %s", actual, a.display, expected, reflect.ValueOf(actual).Kind(), reflect.ValueOf(expected).Kind())
-		return
+		return FailureHandler
 	}
 	if IsInt(actual) {
 		actual, expected = ToInt64(actual, expected)
@@ -160,7 +173,9 @@ func (a *ToAssertion) To(expected interface{}) {
 	}
 	if a.comparitor(kind, actual, expected) == a.invert {
 		showError(actual, expected, a.invert, a.display)
+		return FailureHandler
 	}
+	return SuccessHandler
 }
 
 func showError(actual, expected interface{}, invert bool, display string) {
@@ -184,16 +199,18 @@ func newThanAssertion(actual interface{}, c Comparitor, toDisplay, thanDisplay s
 	}
 }
 
-func (a *ThanAssertion) Than(expected interface{}) {
+func (a *ThanAssertion) Than(expected interface{}) PostHandler {
 	actual := a.to.actual
 	a.to.invert = a.invert
 	if IsNumeric(actual) == false {
 		Errorf("cannot use %s for type %s", a.display, reflect.ValueOf(actual).Kind())
-	} else if IsNumeric(expected) == false {
-		Errorf("cannot use %s for type %s", a.display, reflect.ValueOf(expected).Kind())
-	} else {
-		a.to.To(expected)
+		return FailureHandler
 	}
+	if IsNumeric(expected) == false {
+		Errorf("cannot use %s for type %s", a.display, reflect.ValueOf(expected).Kind())
+		return FailureHandler
+	}
+	return a.to.To(expected)
 }
 
 func contains(actual, expected interface{}) bool {

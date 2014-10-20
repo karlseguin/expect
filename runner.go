@@ -129,6 +129,12 @@ func (r *Runner) Errorf(format string, args ...interface{}) {
 	r.current.failures = append(r.current.failures, failure)
 }
 
+func (r *Runner) AdditionalInfo(format string, args ...interface{}) {
+	if r.current != nil {
+		r.current.AdditionalInfo(format, args...)
+	}
+}
+
 type Result struct {
 	method      string
 	failures    []*Failure
@@ -139,8 +145,9 @@ type Result struct {
 }
 
 type Failure struct {
-	message  string
-	location string
+	message    string
+	location   string
+	additional string
 }
 
 func (r *Result) Skip(format string, args ...interface{}) {
@@ -150,6 +157,13 @@ func (r *Result) Skip(format string, args ...interface{}) {
 
 func (r *Result) Passed() bool {
 	return r.skip || len(r.failures) == 0
+}
+
+func (r *Result) AdditionalInfo(format string, args ...interface{}) {
+	l := len(r.failures)
+	if l > 0 {
+		r.failures[l-1].additional = fmt.Sprintf(format, args...)
+	}
 }
 
 func (r *Result) Report() {
@@ -163,6 +177,9 @@ func (r *Result) Report() {
 		color.Println(" @r×" + info)
 		for _, failure := range r.failures {
 			color.Printf("   @.%-50s\t%-30s\n", failure.message, failure.location)
+			if len(failure.additional) > 0 {
+				color.Printf("   @.%s\n", failure.additional)
+			}
 		}
 	}
 }

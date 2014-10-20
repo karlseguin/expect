@@ -1,6 +1,11 @@
 package mock
 
-type Conn struct {
+import (
+	"net"
+	"time"
+)
+
+type MockConn struct {
 	t         int
 	err       error
 	block     bool
@@ -11,15 +16,15 @@ type Conn struct {
 	Written   [][]byte
 }
 
-func Conn() *Conn {
-	return &Conn{
+func Conn() *MockConn {
+	return &MockConn{
 		first:    true,
 		Written:  make([][]byte, 0, 4),
 		readings: make([][]byte, 0, 4),
 	}
 }
 
-func (c *Conn) Read(out []byte) (int, error) {
+func (c *MockConn) Read(out []byte) (int, error) {
 	if c.first {
 		c.first = false
 		if c.err != nil {
@@ -48,7 +53,7 @@ func (c *Conn) Read(out []byte) (int, error) {
 	return length, nil
 }
 
-func (c *Conn) Write(b []byte) (int, error) {
+func (c *MockConn) Write(b []byte) (int, error) {
 	if c.err != nil {
 		return 0, c.err
 	}
@@ -56,46 +61,46 @@ func (c *Conn) Write(b []byte) (int, error) {
 	return len(b), nil
 }
 
-func (c *Conn) Close() error {
+func (c *MockConn) Close() error {
 	c.Closed = true
 	return nil
 }
 
-func (c *Conn) LocalAddr() net.Addr {
+func (c *MockConn) LocalAddr() net.Addr {
 	return nil
 }
 
-func (c *Conn) RemoteAddr() net.Addr {
+func (c *MockConn) RemoteAddr() net.Addr {
 	return nil
 }
 
-func (c *Conn) SetDeadline(t time.Time) error {
+func (c *MockConn) SetDeadline(t time.Time) error {
 	c.SetReadDeadline(t)
 	c.SetWriteDeadline(t)
 	return nil
 }
 
-func (c *Conn) SetReadDeadline(t time.Time) error {
+func (c *MockConn) SetReadDeadline(t time.Time) error {
 	return nil
 }
 
-func (c *Conn) SetWriteDeadline(t time.Time) error {
+func (c *MockConn) SetWriteDeadline(t time.Time) error {
 	return nil
 }
 
-func (c *Conn) Error(err error) *Conn {
+func (c *MockConn) Error(err error) *MockConn {
 	c.err = err
 	return c
 }
 
-func (c *Conn) Reading(data ...[][]byte) *Conn {
+func (c *MockConn) Reading(data ...[][]byte) *MockConn {
 	for _, d := range data {
-		c.readings = append(c.readings, d)
+		c.readings = append(c.readings, d...)
 	}
 	return c
 }
 
-func (c *Conn) Block() *Conn {
+func (c *MockConn) Block() *MockConn {
 	c.block = true
 	return c
 }
