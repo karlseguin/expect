@@ -116,13 +116,37 @@ The `mock` sub-package provides mock objects and buiders for common standard lib
 
 **Work in progress**
 
+## net.Conn
+
+The `MockConn` lets you test both the reading and writing to a `net.Conn` object.
+
+### Writes
+Writes sent to the mock object are captured in the `Written` field. Note that this is a `[][]byte` - it captures each write individually.
+
+### Reads
+You can `Read` from the mock object by first priming it with data via the `Reading` function:
+
+```go
+conn := mock.Conn().Reading([]byte("hello"), []byte("world"))
+```
+
+To drain this connection `Read` will have to be called twice provided a large enough buffer is provided. If the supplied buffer is too small, the mock object will behave as expected, reading what it can, returning the length read and properly handling subsequent requests to `Read`.
+
+Rather than reading data, the mock object can be primed to return an error:
+
+```go
+conn := mock.Conn().Error(errors.New("some error"))
+```
+
+This will cause the first call to `Read` to return an error
+
 # Builders
 
 The `build` sub-package provides build helpers for common standard library components. Builders expose a fluent interface for setting various properties. The default object returned from a builder should be safe to use as-is.
 
 **Work in progress**
 
-## http.Request
+## *http.Request
 
 ```go
 req := build.Request().
