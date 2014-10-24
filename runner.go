@@ -167,7 +167,7 @@ func (r *Result) AdditionalInfo(format string, args ...interface{}) {
 }
 
 func (r *Result) Report() {
-	info := fmt.Sprintf(" %-50s\t%fs", r.method, r.end.Sub(r.start).Seconds())
+	info := fmt.Sprintf(" %-70s%dms", r.method, r.end.Sub(r.start).Nanoseconds()/1000)
 	if r.skip {
 		color.Println(" @y⸚" + info)
 		color.Println("   @." + r.skipMessage)
@@ -176,7 +176,7 @@ func (r *Result) Report() {
 	} else {
 		color.Println(" @r×" + info)
 		for _, failure := range r.failures {
-			color.Printf("   @.%-50s\t%-30s\n", failure.message, failure.location)
+			color.Printf("   @.%-40s%s\n", failure.location, failure.message)
 			if len(failure.additional) > 0 {
 				color.Printf("   @.%s\n", failure.additional)
 			}
