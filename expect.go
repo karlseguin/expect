@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+var NotNil = struct{}{}
+
 type Expectation struct {
 	actual         interface{}
 	others         []interface{}
@@ -117,6 +119,14 @@ func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) PostH
 
 func equal(assertion *ToAssertion, a, b interface{}) bool {
 	aIsNil := IsNil(a)
+	if b == NotNil {
+		if aIsNil {
+			showError(a, "", false, "to be nil")
+			return false
+		} else {
+			return true
+		}
+	}
 	bIsNil := IsNil(b)
 	if aIsNil || bIsNil {
 		if (aIsNil == bIsNil) == assertion.invert {
