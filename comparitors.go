@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	Equals ComparitorType = iota
+	Equals comparitorType = iota
 	NotEqual
 	LessThan
 	LessThanOrEqual
@@ -13,22 +13,22 @@ const (
 	GreaterThanOrEqual
 )
 
-type ComparitorType int
-type Comparitor func(k reflect.Kind, a, b interface{}) bool
-type Resolver func(a, b interface{}) bool
+type comparitorType int
+type comparitor func(k reflect.Kind, a, b interface{}) bool
+type resolver func(a, b interface{}) bool
 
 var (
-	Comparitors = map[reflect.Kind]map[ComparitorType]Resolver{
-		reflect.Int64: map[ComparitorType]Resolver{
+	Comparitors = map[reflect.Kind]map[comparitorType]resolver{
+		reflect.Int64: map[comparitorType]resolver{
 			LessThan: func(a, b interface{}) bool { return a.(int64) < b.(int64) },
 		},
-		reflect.Uint64: map[ComparitorType]Resolver{
+		reflect.Uint64: map[comparitorType]resolver{
 			LessThan: func(a, b interface{}) bool { return a.(uint64) < b.(uint64) },
 		},
-		reflect.Float32: map[ComparitorType]Resolver{
+		reflect.Float32: map[comparitorType]resolver{
 			LessThan: func(a, b interface{}) bool { return a.(float32) < b.(float32) },
 		},
-		reflect.Float64: map[ComparitorType]Resolver{
+		reflect.Float64: map[comparitorType]resolver{
 			LessThan: func(a, b interface{}) bool { return a.(float64) < b.(float64) },
 		},
 	}

@@ -6,7 +6,19 @@ import (
 
 func SameKind(a, b interface{}) (reflect.Kind, bool) {
 	aKind := reflect.ValueOf(a).Kind()
-	return aKind, aKind == reflect.ValueOf(b).Kind()
+	bKind := reflect.ValueOf(b).Kind()
+	if aKind == bKind {
+		return aKind, true
+	}
+
+	if aKind == reflect.Slice && bKind == reflect.String {
+		return reflect.Slice, true
+	}
+	if aKind == reflect.String && bKind == reflect.Slice {
+		return reflect.String, true
+	}
+
+	return aKind, false
 }
 
 func IsNumeric(a interface{}) bool {
@@ -47,4 +59,16 @@ func ToInt64(a, b interface{}) (interface{}, interface{}) {
 
 func ToUint64(a, b interface{}) (interface{}, interface{}) {
 	return reflect.ValueOf(a).Uint(), reflect.ValueOf(b).Uint()
+}
+
+func IsString(a interface{}) bool {
+	return reflect.ValueOf(a).Kind() == reflect.String
+}
+
+func IsSlice(a interface{}) bool {
+	return reflect.ValueOf(a).Kind() == reflect.Slice
+}
+
+func ToString(a interface{}) string {
+	return reflect.ValueOf(a).String()
 }

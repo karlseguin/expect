@@ -154,12 +154,12 @@ func (e *ToExpectation) Contain(expected interface{}) PostHandler {
 
 type ToAssertion struct {
 	actual     interface{}
-	comparitor Comparitor
+	comparitor comparitor
 	display    string
 	invert     bool
 }
 
-func newToAssertion(a interface{}, c Comparitor, display string) *ToAssertion {
+func newToAssertion(a interface{}, c comparitor, display string) *ToAssertion {
 	return &ToAssertion{
 		actual:     a,
 		comparitor: c,
@@ -180,6 +180,10 @@ func (a *ToAssertion) To(expected interface{}) PostHandler {
 	} else if IsUint(actual) {
 		actual, expected = ToUint64(actual, expected)
 		kind = reflect.Uint64
+	} else if kind == reflect.Slice && IsString(expected) {
+		actual = ToString(actual)
+	} else if kind == reflect.String && IsSlice(expected) {
+		expected = ToString(expected)
 	}
 	if a.comparitor(kind, actual, expected) == a.invert {
 		showError(actual, expected, a.invert, a.display)
@@ -202,7 +206,7 @@ type ThanAssertion struct {
 	invert  bool
 }
 
-func newThanAssertion(actual interface{}, c Comparitor, toDisplay, thanDisplay string) *ThanAssertion {
+func newThanAssertion(actual interface{}, c comparitor, toDisplay, thanDisplay string) *ThanAssertion {
 	return &ThanAssertion{
 		to:      newToAssertion(actual, c, toDisplay),
 		display: thanDisplay,
