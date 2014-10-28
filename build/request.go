@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"bytes"
+	"io/ioutil"
 )
 
 type RequestBuilder struct {
@@ -64,5 +66,11 @@ func (rb *RequestBuilder) Host(host string) *RequestBuilder {
 
 func (rb *RequestBuilder) Header(key, value string) *RequestBuilder {
 	rb.Request.Header.Set(key, value)
+	return rb
+}
+
+
+func (rb *RequestBuilder) Body(b string) *RequestBuilder {
+	rb.Request.Body = ioutil.NopCloser(bytes.NewBufferString(b))
 	return rb
 }
