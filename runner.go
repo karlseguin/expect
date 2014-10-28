@@ -167,7 +167,7 @@ func (r *Result) AdditionalInfo(format string, args ...interface{}) {
 }
 
 func (r *Result) Report() {
-	info := fmt.Sprintf(" %-70s%dms", r.method, r.end.Sub(r.start).Nanoseconds()/1000)
+	info := fmt.Sprintf(" %-70s%dms", r.method, r.end.Sub(r.start).Nanoseconds()/1000000)
 	if r.skip {
 		color.Println(" @y⸚" + info)
 		color.Println("   @." + r.skipMessage)
