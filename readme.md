@@ -18,7 +18,7 @@ func Test_Caculator(t *testing.T) {
   Expectify(new(CalculatorTests), t)
 }
 
-func (c *CalculatorTests) AddsTwoNumbers() {
+func (_ *CalculatorTests) AddsTwoNumbers() {
   c := new(Calculator)
   Expect(c.Add(4, 8)).To.Equal(12)
   Expect(c.Add(10, 2)).Greater.Than(11)

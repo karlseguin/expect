@@ -10,7 +10,7 @@ func Test_ExpectNumeric(t *testing.T) {
 	Expectify(new(ExpectNumericTests), t)
 }
 
-func (e *ExpectNumericTests) Greater_Success() {
+func (_ *ExpectNumericTests) Greater_Success() {
 	eachNumeric(10, 9, func(a, b interface{}) {
 		Expect(a).Greater.Than(b)
 	})
@@ -19,7 +19,7 @@ func (e *ExpectNumericTests) Greater_Success() {
 	Expect(float64(-3.33)).Greater.Than(float64(-4))
 }
 
-func (e *ExpectNumericTests) Greater_Failures() {
+func (_ *ExpectNumericTests) Greater_Failures() {
 	failing("expected 9 to be greater than 10", 9, func() {
 		eachNumeric(9, 10, func(a, b interface{}) {
 			Expect(a).Greater.Than(b)
@@ -46,7 +46,7 @@ func (e *ExpectNumericTests) Greater_Failures() {
 	})
 }
 
-func (e *ExpectNumericTests) GreaterOrEqual_Success() {
+func (_ *ExpectNumericTests) GreaterOrEqual_Success() {
 	eachNumeric(10, 9, func(a, b interface{}) {
 		Expect(a).GreaterOrEqual.To(b)
 	})
@@ -60,7 +60,7 @@ func (e *ExpectNumericTests) GreaterOrEqual_Success() {
 	Expect(float64(-3.33)).GreaterOrEqual.To(float64(-3.33))
 }
 
-func (e *ExpectNumericTests) GreaterOrEqual_Failures() {
+func (_ *ExpectNumericTests) GreaterOrEqual_Failures() {
 	failing("expected 9 to be greater or equal to 10", 9, func() {
 		eachNumeric(9, 10, func(a, b interface{}) {
 			Expect(a).GreaterOrEqual.To(b)
@@ -73,7 +73,7 @@ func (e *ExpectNumericTests) GreaterOrEqual_Failures() {
 	})
 }
 
-func (e *ExpectNumericTests) Not_Success() {
+func (_ *ExpectNumericTests) Not_Success() {
 	Expect(492).Not.Greater.Than(493)
 	Expect(493).Not.Greater.Than(493)
 
@@ -85,7 +85,7 @@ func (e *ExpectNumericTests) Not_Success() {
 	Expect(496).Not.LessOrEqual.To(495)
 }
 
-func (e *ExpectNumericTests) Not_Failures() {
+func (_ *ExpectNumericTests) Not_Failures() {
 	failing("expected 494 not to be greater than 493", 1, func() {
 		Expect(494).Not.Greater.Than(493)
 	})
@@ -111,7 +111,7 @@ func (e *ExpectNumericTests) Not_Failures() {
 	})
 }
 
-func (e *ExpectNumericTests) Less_Success() {
+func (_ *ExpectNumericTests) Less_Success() {
 	eachNumeric(9, 10, func(a, b interface{}) {
 		Expect(a).Less.Than(b)
 	})
@@ -120,7 +120,7 @@ func (e *ExpectNumericTests) Less_Success() {
 	Expect(float64(-3.34)).Less.Than(float64(-3.33339))
 }
 
-func (e *ExpectNumericTests) Less_Failures() {
+func (_ *ExpectNumericTests) Less_Failures() {
 	failing("expected 23 to be less than 22", 9, func() {
 		eachNumeric(23, 22, func(a, b interface{}) {
 			Expect(a).Less.Than(b)
@@ -152,7 +152,7 @@ func (e *ExpectNumericTests) Less_Failures() {
 	})
 }
 
-func (e *ExpectNumericTests) LessOrEqual_Success() {
+func (_ *ExpectNumericTests) LessOrEqual_Success() {
 	eachNumeric(9, 10, func(a, b interface{}) {
 		Expect(a).LessOrEqual.To(b)
 	})
@@ -166,7 +166,7 @@ func (e *ExpectNumericTests) LessOrEqual_Success() {
 	Expect(float64(-3.33)).LessOrEqual.To(float64(-3.33))
 }
 
-func (e *ExpectNumericTests) LessOrEqual_Failures() {
+func (_ *ExpectNumericTests) LessOrEqual_Failures() {
 	failing("expected 3 to be less or equal to 1", 9, func() {
 		eachNumeric(3, 1, func(a, b interface{}) {
 			Expect(a).LessOrEqual.To(b)
@@ -179,7 +179,7 @@ func (e *ExpectNumericTests) LessOrEqual_Failures() {
 	})
 }
 
-func (e *ExpectNumericTests) Equal_Success() {
+func (_ *ExpectNumericTests) Equal_Success() {
 	eachNumeric(101, 101, func(a, b interface{}) {
 		Expect(a).To.Equal(b)
 	})
@@ -188,7 +188,7 @@ func (e *ExpectNumericTests) Equal_Success() {
 	Expect(float64(-3.33011)).To.Equal(float64(-3.33011))
 }
 
-func (e *ExpectNumericTests) Equal_Failures() {
+func (_ *ExpectNumericTests) Equal_Failures() {
 	failing("expected 3 to be equal to 1", 9, func() {
 		eachNumeric(3, 1, func(a, b interface{}) {
 			Expect(a).To.Equal(b)
@@ -201,7 +201,7 @@ func (e *ExpectNumericTests) Equal_Failures() {
 	})
 }
 
-func (e *ExpectNumericTests) NotEqual_Success() {
+func (_ *ExpectNumericTests) NotEqual_Success() {
 	eachNumeric(101, 100, func(a, b interface{}) {
 		Expect(a).Not.To.Equal(b)
 	})
@@ -210,7 +210,7 @@ func (e *ExpectNumericTests) NotEqual_Success() {
 	Expect(float64(-3.33011)).Not.To.Equal(float64(-3.330111))
 }
 
-func (e *ExpectNumericTests) NotEqual_Failures() {
+func (_ *ExpectNumericTests) NotEqual_Failures() {
 	failing("expected 33 not to equal 33", 9, func() {
 		eachNumeric(33, 33, func(a, b interface{}) {
 			Expect(a).Not.To.Equal(b)

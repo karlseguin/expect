@@ -1,11 +1,11 @@
 package build
 
 import (
+	"bytes"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strconv"
-	"bytes"
-	"io/ioutil"
 )
 
 type RequestBuilder struct {
@@ -22,7 +22,7 @@ func Request() *RequestBuilder {
 			ProtoMinor: 1,
 			Host:       "localtest",
 			URL:        u,
-			Header:    make(http.Header),
+			Header:     make(http.Header),
 		},
 	}
 }
@@ -68,7 +68,6 @@ func (rb *RequestBuilder) Header(key, value string) *RequestBuilder {
 	rb.Request.Header.Set(key, value)
 	return rb
 }
-
 
 func (rb *RequestBuilder) Body(b string) *RequestBuilder {
 	rb.Request.Body = ioutil.NopCloser(bytes.NewBufferString(b))
