@@ -18,8 +18,9 @@ func Request() *RequestBuilder {
 			Proto:      "HTTP/1.1",
 			ProtoMajor: 1,
 			ProtoMinor: 1,
-			Host:       "local.test",
+			Host:       "localtest",
 			URL:        u,
+			Header:    make(http.Header),
 		},
 	}
 }
@@ -58,5 +59,10 @@ func (rb *RequestBuilder) Path(path string) *RequestBuilder {
 func (rb *RequestBuilder) Host(host string) *RequestBuilder {
 	rb.Request.URL.Host = host
 	rb.Request.Host = host
+	return rb
+}
+
+func (rb *RequestBuilder) Header(key, value string) *RequestBuilder {
+	rb.Request.Header.Set(key, value)
 	return rb
 }

@@ -161,3 +161,4 @@ req := build.Request().
 * `URLString(url string)` - panics if `url` isn't a valid URL
 * `Path(path string)` - changes the `path` component of the URL only
 * `Host(host string)` - changes the `host` component of the URL only
+* `Header(key, value string) - set the specified header
