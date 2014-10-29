@@ -32,6 +32,15 @@ func init() {
 }
 
 func Expectify(suite interface{}, t *testing.T) {
+	var name string
+	defer func() {
+		if err := recover(); err != nil {
+			os.Stdout = stdout
+			color.Printf("@R 💣  %-75s\n", name)
+			panic(err)
+		}
+	}()
+
 	tp := reflect.TypeOf(suite)
 	sv := reflect.ValueOf(suite)
 	count := tp.NumMethod()
@@ -42,7 +51,7 @@ func Expectify(suite interface{}, t *testing.T) {
 	announced := false
 	for i := 0; i < count; i++ {
 		method := tp.Method(i)
-		name := method.Name
+		name = method.Name
 		if pattern.MatchString(name) == false || method.Type.NumIn() != 1 {
 			continue
 		}
