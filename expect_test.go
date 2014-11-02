@@ -23,7 +23,7 @@ func (e *ExpectTests) Equal_Success() {
 }
 
 func (e *ExpectTests) Equal_Failures() {
-	failing("expected abc to be equal to 123", 1, func() {
+	failing(`expected "abc" to be equal to "123"`, 1, func() {
 		Expect("abc").To.Equal("123")
 	})
 
@@ -46,7 +46,7 @@ func (e *ExpectTests) NotEqual_Success() {
 }
 
 func (e *ExpectTests) NoEqual_Failures() {
-	failing("expected 123 not to equal 123", 1, func() {
+	failing(`expected "123" not to equal "123"`, 1, func() {
 		Expect("123").Not.To.Equal("123")
 	})
 
@@ -118,7 +118,7 @@ func (e *ExpectTests) ExpectMulipleValues_Failure() {
 	failing("expected 1 to be equal to 2", 1, func() {
 		Expect(1, "a").To.Equal(2, "a")
 	})
-	failing("expected a to be equal to b", 1, func() {
+	failing(`expected "a" to be equal to "b"`, 1, func() {
 		Expect(1, "a").To.Equal(1, "b")
 	})
 }

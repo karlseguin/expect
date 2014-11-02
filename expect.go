@@ -197,7 +197,11 @@ func showError(actual, expected interface{}, invert bool, display string) {
 	if invert {
 		inversion = "not "
 	}
-	Errorf("expected %v %s%s %v", actual, inversion, display, expected)
+	if _, ok := actual.(string); ok {
+		Errorf("expected %q %s%s %q", actual, inversion, display, expected)
+	} else {
+		Errorf("expected %v %s%s %v", actual, inversion, display, expected)
+	}
 }
 
 type ThanAssertion struct {
