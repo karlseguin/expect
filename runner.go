@@ -46,7 +46,7 @@ func Expectify(suite interface{}, t *testing.T) {
 	count := tp.NumMethod()
 
 	runner = &Runner{
-		results: make([]*Result, 0, 10),
+		results: make([]*result, 0, 10),
 	}
 	announced := false
 	for i := 0; i < count; i++ {
@@ -56,14 +56,14 @@ func Expectify(suite interface{}, t *testing.T) {
 			continue
 		}
 		os.Stdout = stdout
-		result := runner.Start(name)
+		res := runner.Start(name)
 		method.Func.Call([]reflect.Value{sv})
 		if runner.End() == false || testing.Verbose() {
 			if announced == false {
 				color.Printf("\n@!%s@|\n", sv.Elem().Type().String())
 				announced = true
 			}
-			result.Report()
+			res.Report()
 		}
 		os.Stdout = silentOut
 	}
@@ -76,12 +76,12 @@ func Expectify(suite interface{}, t *testing.T) {
 }
 
 type Runner struct {
-	results []*Result
-	current *Result
+	results []*result
+	current *result
 }
 
-func (r *Runner) Start(name string) *Result {
-	r.current = &Result{
+func (r *Runner) Start(name string) *result {
+	r.current = &result{
 		method:   name,
 		start:    time.Now(),
 		failures: make([]*Failure, 0, 3),
@@ -144,7 +144,7 @@ func (r *Runner) AdditionalInfo(format string, args ...interface{}) {
 	}
 }
 
-type Result struct {
+type result struct {
 	method      string
 	failures    []*Failure
 	start       time.Time
@@ -159,23 +159,23 @@ type Failure struct {
 	additional string
 }
 
-func (r *Result) Skip(format string, args ...interface{}) {
+func (r *result) Skip(format string, args ...interface{}) {
 	r.skip = true
 	r.skipMessage = fmt.Sprintf(format, args...)
 }
 
-func (r *Result) Passed() bool {
+func (r *result) Passed() bool {
 	return r.skip || len(r.failures) == 0
 }
 
-func (r *Result) AdditionalInfo(format string, args ...interface{}) {
+func (r *result) AdditionalInfo(format string, args ...interface{}) {
 	l := len(r.failures)
 	if l > 0 {
 		r.failures[l-1].additional = fmt.Sprintf(format, args...)
 	}
 }
 
-func (r *Result) Report() {
+func (r *result) Report() {
 	info := fmt.Sprintf(" %-70s%dms", r.method, r.end.Sub(r.start).Nanoseconds()/1000000)
 	if r.skip {
 		color.Println(" @y⸚" + info)
