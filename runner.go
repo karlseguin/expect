@@ -138,9 +138,9 @@ func (r *Runner) Errorf(format string, args ...interface{}) {
 	r.current.failures = append(r.current.failures, failure)
 }
 
-func (r *Runner) AdditionalInfo(format string, args ...interface{}) {
+func (r *Runner) ErrorMessage(format string, args ...interface{}) {
 	if r.current != nil {
-		r.current.AdditionalInfo(format, args...)
+		r.current.ErrorMessage(format, args...)
 	}
 }
 
@@ -156,7 +156,6 @@ type result struct {
 type Failure struct {
 	message    string
 	location   string
-	additional string
 }
 
 func (r *result) Skip(format string, args ...interface{}) {
@@ -168,10 +167,10 @@ func (r *result) Passed() bool {
 	return r.skip || len(r.failures) == 0
 }
 
-func (r *result) AdditionalInfo(format string, args ...interface{}) {
+func (r *result) ErrorMessage(format string, args ...interface{}) {
 	l := len(r.failures)
 	if l > 0 {
-		r.failures[l-1].additional = fmt.Sprintf(format, args...)
+		r.failures[l-1].message = fmt.Sprintf(format, args...)
 	}
 }
 
@@ -185,11 +184,7 @@ func (r *result) Report() {
 	} else {
 		color.Println(" @r×" + info)
 		for _, failure := range r.failures {
-			color.Printf("   @.%-40s%s", failure.location, failure.message)
-			if len(failure.additional) > 0 {
-				color.Printf(" | @r%s", failure.additional)
-			}
-			fmt.Println("")
+			color.Printf("   @.%-40s%s\n", failure.location, failure.message)
 		}
 	}
 }

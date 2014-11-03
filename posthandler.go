@@ -13,7 +13,7 @@ type FailurePostHandler struct {
 }
 
 func (h *FailurePostHandler) Message(format string, args ...interface{}) {
-	runner.AdditionalInfo(format, args...)
+	runner.ErrorMessage(format, args...)
 }
 
 type SuccessPostHandler struct {
