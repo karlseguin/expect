@@ -185,10 +185,11 @@ func (r *result) Report() {
 	} else {
 		color.Println(" @r×" + info)
 		for _, failure := range r.failures {
-			color.Printf("   @.%-40s%s\n", failure.location, failure.message)
+			color.Printf("   @.%-40s%s", failure.location, failure.message)
 			if len(failure.additional) > 0 {
-				color.Printf("   @.%s\n", failure.additional)
+				color.Printf(" | @r%s", failure.additional)
 			}
+			fmt.Println("")
 		}
 	}
 }
