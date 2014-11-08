@@ -110,6 +110,31 @@ Since `Expect` runs within `go test`, you can mix `Expect` style tests with trad
 
 This also means that `go test` features, such as `-cover`, work with `Expect`. However, `Expect` tests cannot be run in parallel.
 
+## Advanced Patterns
+
+Since tests are organized within a class, there are patterns you can used for tests which require special care. For example, unexported methods can be used for helpers without conflicting with other helpers:
+
+```go
+func (ct *CalculatorTests) AddsTwoNumbers() {
+  c := ct.n()
+  // ...
+}
+
+func (ct *CalculatorTests) n() *Calculator {
+  return &Calculator{...}
+}
+```
+
+Futhermore, when you setup the runner, you can setup code to before or after running tests (once for all tests, not once per test):
+
+```go
+func Test_Caculator(t *testing.T) {
+  // before all tests
+  Expectify(new(CalculatorTests), t)
+  // after all tests
+}
+```
+
 # Mocks
 
 The `mock` sub-package provides mock objects and buiders for common standard library components.

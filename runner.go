@@ -51,6 +51,10 @@ func Expectify(suite interface{}, t *testing.T) {
 	announced := false
 	for i := 0; i < count; i++ {
 		method := tp.Method(i)
+		// this method is not exported
+		if len(method.PkgPath) != 0 {
+			continue
+		}
 		name = method.Name
 		if pattern.MatchString(name) == false || method.Type.NumIn() != 1 {
 			continue
@@ -154,8 +158,8 @@ type result struct {
 }
 
 type Failure struct {
-	message    string
-	location   string
+	message  string
+	location string
 }
 
 func (r *result) Skip(format string, args ...interface{}) {
