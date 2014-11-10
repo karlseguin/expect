@@ -48,6 +48,9 @@ func Expectify(suite interface{}, t *testing.T) {
 	runner = &Runner{
 		results: make([]*result, 0, 10),
 	}
+
+	each, _ := tp.MethodByName("Each")
+
 	announced := false
 	for i := 0; i < count; i++ {
 		method := tp.Method(i)
@@ -61,13 +64,20 @@ func Expectify(suite interface{}, t *testing.T) {
 		}
 		os.Stdout = stdout
 		res := runner.Start(name)
-		method.Func.Call([]reflect.Value{sv})
-		if runner.End() == false || testing.Verbose() {
-			if announced == false {
-				color.Printf("\n@!%s@|\n", sv.Elem().Type().String())
-				announced = true
+		var f = func() {
+			method.Func.Call([]reflect.Value{sv})
+			if runner.End() == false || testing.Verbose() {
+				if announced == false {
+					color.Printf("\n@!%s@|\n", sv.Elem().Type().String())
+					announced = true
+				}
+				res.Report()
 			}
-			res.Report()
+		}
+		if each.Func.IsValid() {
+			each.Func.Call([]reflect.Value{sv, reflect.ValueOf(f)})
+		} else {
+			f()
 		}
 		os.Stdout = silentOut
 	}
