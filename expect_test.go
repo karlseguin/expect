@@ -182,6 +182,12 @@ func (_ *ExpectTests) AltenrativeSyntax() {
 	Expect(12).Not.LessOrEqualTo(1)
 }
 
+func (_ *ExpectTests) Json() {
+	Expect(`{"about":true}`).To.Equal(JSON(`{
+		"about": true
+	}`))
+}
+
 func failing(expected string, count int, f func()) {
 	actuals := make([]string, 0, 5)
 	Errorf = func(format string, args ...interface{}) {

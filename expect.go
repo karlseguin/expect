@@ -2,9 +2,12 @@ package expect
 
 import (
 	"bytes"
+	"encoding/json"
 	"reflect"
 	"strings"
 )
+
+type JSON string
 
 var NotNil = struct{}{}
 
@@ -169,6 +172,28 @@ func newToAssertion(a interface{}, c comparitor, display string) *ToAssertion {
 
 func (a *ToAssertion) To(expected interface{}) PostHandler {
 	actual := a.actual
+
+	if j, ok := expected.(JSON); ok {
+		var a []byte
+		switch t := actual.(type) {
+		case []byte:
+			a = t
+		case string:
+			a = []byte(t)
+		default:
+			Errorf("JSON() helper can only be used with a string or []byte actual")
+			return FailureHandler
+		}
+		if actual, ok = convertToJson(a); ok == false {
+			Errorf("invalid json %v", string(a))
+			return FailureHandler
+		}
+		if expected, ok = convertToJson([]byte(j)); ok == false {
+			Errorf("invalid json %v", string(j))
+			return FailureHandler
+		}
+	}
+
 	kind, ok := SameKind(actual, expected)
 	if ok == false {
 		Errorf("expected %v %s %v - type mismatch %s != %s", actual, a.display, expected, reflect.ValueOf(actual).Kind(), reflect.ValueOf(expected).Kind())
@@ -256,4 +281,12 @@ func contains(actual, expected interface{}) bool {
 		}
 	}
 	return false
+}
+
+func convertToJson(bytes []byte) (interface{}, bool) {
+	var m interface{}
+	if err := json.Unmarshal(bytes, &m); err != nil {
+		return bytes, false
+	}
+	return m, true
 }

@@ -62,6 +62,19 @@ All expectations can be reversed by starting the chain with `Not.`:
 * `Not.Less.Than(x)` or `Not.LessThan(x)`
 * `Not.LessOrEqual.To(x)` or `Not.LessOrEqualTo(x)`
 
+### JSON
+
+`Expect` exposes a `JSON` helper:
+
+```go
+Expect(`{"spice":"must flow"}`).To.Equal(JSON(`
+{
+  "spice": "must flow"
+}`))
+```
+
+The helper makes it possible to write a expectations which ignore white spaces and are thus easier to write, read and maintain. Internally, when the `JSON` helper is used, both values are (actual and expected) are unmarshalled using the encoding/json library (essentially converted to an map[string]interface{}) and a then compared in this form.
+
 ### Contains
 
 `To.Contain` works with strings, arrays, slices and maps. For arrays and slices, only individual values are matched. For example:
