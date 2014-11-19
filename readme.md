@@ -210,6 +210,7 @@ req := build.Request().
 * `URL(u *url.URL)`
 * `URLString(url string)` - panics if `url` isn't a valid URL
 * `Path(path string)` - changes the `path` component of the URL only
+* `RawQuery(query string)` - changes the `rawquery` component of the URL only
 * `Host(host string)` - changes the `host` component of the URL only
 * `Header(key, value string)` - set the specified header
 * `Body(body string)` - set's the request's body

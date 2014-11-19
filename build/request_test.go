@@ -11,28 +11,35 @@ func Test_Request(t *testing.T) {
 	Expectify(new(RequestTests), t)
 }
 
-func (_ *RequestTests) SetsProtocol() {
+func (_ RequestTests) SetsProtocol() {
 	req := Request().Proto(2, 4).Request
 	Expect(req.Proto).To.Equal("HTTP/2.4")
 	Expect(req.ProtoMajor).To.Equal(2)
 	Expect(req.ProtoMinor).To.Equal(4)
 }
 
-func (_ *RequestTests) SetsURL() {
+func (_ RequestTests) SetsURL() {
 	req := Request().URLString("http://openmymind.net/test?a=1").Request
 	Expect(req.URL.Host).To.Equal("openmymind.net")
 	Expect(req.URL.Path).To.Equal("/test")
 	Expect(req.URL.RawQuery).To.Equal("a=1")
 }
 
-func (_ *RequestTests) SetsPath() {
+func (_ RequestTests) SetsPath() {
 	req := Request().Path("/hello").Request
 	Expect(req.URL.Host).To.Equal("local.test")
 	Expect(req.URL.Path).To.Equal("/hello")
 	Expect(req.URL.RawQuery).To.Equal("")
 }
 
-func (_ *RequestTests) SetsHost() {
+func (_ RequestTests) SetsRawQuery() {
+	req := Request().RawQuery("a=1&b=2").Request
+	Expect(req.URL.Query()["a"][0]).To.Equal("1")
+	Expect(req.URL.Query()["b"][0]).To.Equal("2")
+	Expect(req.URL.RawQuery).To.Equal("a=1&b=2")
+}
+
+func (_ RequestTests) SetsHost() {
 	req := Request().Host("openmymind.io").Request
 	Expect(req.URL.Host).To.Equal("openmymind.io")
 	Expect(req.URL.Path).To.Equal("/spice")

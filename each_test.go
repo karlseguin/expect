@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-type EachTests struct{
+type EachTests struct {
 	called bool
 }
 

@@ -58,6 +58,11 @@ func (rb *RequestBuilder) Path(path string) *RequestBuilder {
 	return rb
 }
 
+func (rb *RequestBuilder) RawQuery(query string) *RequestBuilder {
+	rb.Request.URL.RawQuery = query
+	return rb
+}
+
 func (rb *RequestBuilder) Host(host string) *RequestBuilder {
 	rb.Request.URL.Host = host
 	rb.Request.Host = host
