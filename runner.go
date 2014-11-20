@@ -193,6 +193,9 @@ func (r *result) ErrorMessage(format string, args ...interface{}) {
 }
 
 func (r *result) Report() {
+	if r.end.IsZero() {
+		r.end = time.Now()
+	}
 	info := fmt.Sprintf(" %-70s%dms", r.method, r.end.Sub(r.start).Nanoseconds()/1000000)
 	if r.skip {
 		color.Println(" @y⸚" + info)
