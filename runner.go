@@ -33,9 +33,13 @@ func init() {
 
 func Expectify(suite interface{}, t *testing.T) {
 	var name string
+	var res *result
 	defer func() {
 		if err := recover(); err != nil {
 			os.Stdout = stdout
+			if res != nil {
+				res.Report()
+			}
 			color.Printf("@R 💣  %-75s\n", name)
 			panic(err)
 		}
@@ -63,7 +67,7 @@ func Expectify(suite interface{}, t *testing.T) {
 			continue
 		}
 		os.Stdout = stdout
-		res := runner.Start(name)
+		res = runner.Start(name)
 		var f = func() {
 			method.Func.Call([]reflect.Value{sv})
 			if runner.End() == false || testing.Verbose() {
