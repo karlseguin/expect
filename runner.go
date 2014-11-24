@@ -54,6 +54,9 @@ func Expectify(suite interface{}, t *testing.T) {
 	}
 
 	each, _ := tp.MethodByName("Each")
+	if each.Func.IsValid() && each.Type.NumIn() != 2 {
+		each = reflect.Method{}
+	}
 
 	announced := false
 	for i := 0; i < count; i++ {
