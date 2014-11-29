@@ -16,6 +16,7 @@ type MockConn struct {
 	Written   [][]byte
 }
 
+// Creates a new mock object which satisfies the net.Conn interface
 func Conn() *MockConn {
 	return &MockConn{
 		first:    true,
@@ -74,16 +75,19 @@ func (c *MockConn) RemoteAddr() net.Addr {
 	return nil
 }
 
+// noop
 func (c *MockConn) SetDeadline(t time.Time) error {
 	c.SetReadDeadline(t)
 	c.SetWriteDeadline(t)
 	return nil
 }
 
+// noop
 func (c *MockConn) SetReadDeadline(t time.Time) error {
 	return nil
 }
 
+// noop
 func (c *MockConn) SetWriteDeadline(t time.Time) error {
 	return nil
 }
@@ -93,6 +97,7 @@ func (c *MockConn) Error(err error) *MockConn {
 	return c
 }
 
+// Define what each call to Read() will read
 func (c *MockConn) Reading(data ...[]byte) *MockConn {
 	for _, d := range data {
 		c.readings = append(c.readings, d)
@@ -103,4 +108,17 @@ func (c *MockConn) Reading(data ...[]byte) *MockConn {
 func (c *MockConn) Block() *MockConn {
 	c.block = true
 	return c
+}
+
+// Returns whatever data hasn't been read yet
+func (c *MockConn) Drain() []byte {
+	left := 0
+	for i := c.readIndex; i < len(c.readings); i++ {
+		left += len(c.readings[i])
+	}
+	data := make([]byte, 0, left)
+	for i := c.readIndex; i < len(c.readings); i++ {
+		data = append(data, c.readings[i]...)
+	}
+	return data
 }
