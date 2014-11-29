@@ -93,9 +93,9 @@ func (c *MockConn) Error(err error) *MockConn {
 	return c
 }
 
-func (c *MockConn) Reading(data ...[][]byte) *MockConn {
+func (c *MockConn) Reading(data ...[]byte) *MockConn {
 	for _, d := range data {
-		c.readings = append(c.readings, d...)
+		c.readings = append(c.readings, d)
 	}
 	return c
 }
