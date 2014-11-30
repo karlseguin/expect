@@ -1,8 +1,8 @@
 package expect
 
 import (
-	"github.com/karlseguin/expect/mock"
 	"github.com/karlseguin/expect/build"
+	"github.com/karlseguin/expect/mock"
 )
 
 func MockConn() *mock.MockConn {

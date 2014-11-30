@@ -160,6 +160,18 @@ func (_ *CalculatorTests) Each(f func()) {
 }
 ```
 
+
+### Global Before Each
+A before each can be registered for all suites. This function will be called before any suite-specific Each.
+
+```go
+func init() {
+  BeforeEach(func() {
+    //do something
+  })
+}
+```
+
 # Mocks
 
 The `mock` sub-package provides mock objects and buiders for common standard library components.

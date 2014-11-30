@@ -6,8 +6,15 @@ import (
 )
 
 var originalErrorf = Errorf
+var beforeEachCalled = 0
 
 type ExpectTests struct{}
+
+func init() {
+	BeforeEach(func() {
+		beforeEachCalled++
+	})
+}
 
 func Test_Expect(t *testing.T) {
 	Expectify(new(ExpectTests), t)
@@ -186,6 +193,10 @@ func (_ *ExpectTests) Json() {
 	Expect(`{"about":true}`).To.Equal(JSON(`{
 		"about": true
 	}`))
+}
+
+func (_ *ExpectTests) GlobalBeforEEach() {
+	Expect(beforeEachCalled).Greater.Than(0)
 }
 
 func failing(expected string, count int, f func()) {

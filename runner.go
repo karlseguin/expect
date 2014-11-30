@@ -20,6 +20,7 @@ var (
 	runner     *Runner
 	stdout     = os.Stdout
 	silentOut  *os.File
+	beforeEach = make([]func(), 0, 2)
 )
 
 func init() {
@@ -81,6 +82,9 @@ func Expectify(suite interface{}, t *testing.T) {
 				res.Report()
 			}
 		}
+		for i := 0; i < len(beforeEach); i++ {
+			beforeEach[i]()
+		}
 		if each.Func.IsValid() {
 			each.Func.Call([]reflect.Value{sv, reflect.ValueOf(f)})
 		} else {
@@ -94,6 +98,10 @@ func Expectify(suite interface{}, t *testing.T) {
 		os.Stdout = silentOut
 		t.Fail()
 	}
+}
+
+func BeforeEach(f func()) {
+	beforeEach = append(beforeEach, f)
 }
 
 type Runner struct {
