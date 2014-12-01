@@ -1,7 +1,6 @@
 package mock
 
 import (
-	"errors"
 	"net"
 	"time"
 )
@@ -12,14 +11,10 @@ type MockConn struct {
 	block        bool
 	readIndex    int
 	first        bool
-	readTimeout  time.Time
-	writeTimeout time.Time
 	readings     [][]byte
 	Closed       bool
 	Written      [][]byte
 }
-
-var TimeoutErr = &TimeoutError{errors.New("i/o timeout")}
 
 // Creates a new mock object which satisfies the net.Conn interface
 func Conn() *MockConn {
@@ -64,9 +59,6 @@ func (c *MockConn) Write(b []byte) (int, error) {
 	if c.err != nil {
 		return 0, c.err
 	}
-	if c.writeTimeout.IsZero() == false {
-		return 0, TimeoutErr
-	}
 	c.Written = append(c.Written, b)
 	return len(b), nil
 }
@@ -91,13 +83,11 @@ func (c *MockConn) SetDeadline(t time.Time) error {
 }
 
 func (c *MockConn) SetReadDeadline(t time.Time) error {
-	c.readTimeout = t
 	return nil
 }
 
 // noop
 func (c *MockConn) SetWriteDeadline(t time.Time) error {
-	c.writeTimeout = t
 	return nil
 }
 
