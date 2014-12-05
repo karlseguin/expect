@@ -2,6 +2,8 @@ package build
 
 import (
 	"bytes"
+	"compress/gzip"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -71,10 +73,25 @@ func (rb *RequestBuilder) Host(host string) *RequestBuilder {
 
 func (rb *RequestBuilder) Header(key, value string) *RequestBuilder {
 	rb.Request.Header.Set(key, value)
+	if key == "Content-Encoding" && value == "gzip" && rb.Request.Body != nil {
+		rb.compressBody()
+	}
 	return rb
 }
 
 func (rb *RequestBuilder) Body(b string) *RequestBuilder {
 	rb.Request.Body = ioutil.NopCloser(bytes.NewBufferString(b))
+	if rb.Request.Header.Get("Content-Encoding") == "gzip" {
+		rb.compressBody()
+	}
 	return rb
+}
+
+func (rb *RequestBuilder) compressBody() {
+	buffer := new(bytes.Buffer)
+	writer := gzip.NewWriter(buffer)
+	io.Copy(writer, rb.Request.Body)
+	writer.Close()
+	rb.Request.Body.Close()
+	rb.Request.Body = ioutil.NopCloser(buffer)
 }

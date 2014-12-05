@@ -1,7 +1,10 @@
 package build
 
 import (
+	"compress/gzip"
 	e "github.com/karlseguin/expect"
+	"io"
+	"net/http"
 	"testing"
 )
 
@@ -44,4 +47,29 @@ func (_ RequestTests) SetsHost() {
 	e.Expect(req.URL.Host).To.Equal("openmymind.io")
 	e.Expect(req.URL.Path).To.Equal("/spice")
 	e.Expect(req.Host).To.Equal("openmymind.io")
+}
+
+func (_ RequestTests) GzipsABodyOnSettingHeader() {
+	req := Request().Body("abc123").Header("Content-Encoding", "gzip").Request
+	assertGzipBody(req, "abc123")
+}
+
+func (_ RequestTests) GzipsABodyWhenHeaderAlreadySet() {
+	req := Request().Header("Content-Encoding", "gzip").Body("over=9000!").Request
+	assertGzipBody(req, "over=9000!")
+}
+
+func assertGzipBody(req *http.Request, expected string) {
+	reader, _ := gzip.NewReader(req.Body)
+	actual := make([]byte, 100)
+	read := 0
+	for {
+		n, err := reader.Read(actual[read:])
+		read += n
+		if err == io.EOF {
+			break
+		}
+	}
+	e.Expect(string(actual[:read])).To.Equal(expected)
+	reader.Close()
 }

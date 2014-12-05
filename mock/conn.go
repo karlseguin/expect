@@ -6,14 +6,14 @@ import (
 )
 
 type MockConn struct {
-	t            int
-	err          error
-	block        bool
-	readIndex    int
-	first        bool
-	readings     [][]byte
-	Closed       bool
-	Written      [][]byte
+	t         int
+	err       error
+	block     bool
+	readIndex int
+	first     bool
+	readings  [][]byte
+	Closed    bool
+	Written   [][]byte
 }
 
 // Creates a new mock object which satisfies the net.Conn interface
