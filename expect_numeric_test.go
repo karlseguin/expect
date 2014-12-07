@@ -2,6 +2,7 @@ package expect
 
 import (
 	"testing"
+	"time"
 )
 
 type ExpectNumericTests struct{}
@@ -17,6 +18,10 @@ func (_ *ExpectNumericTests) Greater_Success() {
 
 	Expect(float32(10.1)).Greater.Than(float32(-10.0))
 	Expect(float64(-3.33)).Greater.Than(float64(-4))
+}
+
+func (_ *ExpectNumericTests) Greater_Success_Time() {
+	Expect(time.Now()).Greater.Than(time.Now().Add(time.Second * -2))
 }
 
 func (_ *ExpectNumericTests) Greater_Failures() {
@@ -46,6 +51,16 @@ func (_ *ExpectNumericTests) Greater_Failures() {
 	})
 }
 
+func (_ *ExpectNumericTests) Greater_Failure_Time() {
+	failing("expected 2014-12-07 11:18:10 +0700 ICT to be greater than 2014-12-07 11:18:11 +0700 ICT", 1, func() {
+		Expect(time.Unix(1417925890, 0)).Greater.Than(time.Unix(1417925891, 0))
+	})
+
+	failing("expected 2014-12-07 11:18:10 +0700 ICT to be greater than 2014-12-07 11:18:10 +0700 ICT", 1, func() {
+		Expect(time.Unix(1417925890, 0)).Greater.Than(time.Unix(1417925890, 0))
+	})
+}
+
 func (_ *ExpectNumericTests) GreaterOrEqual_Success() {
 	eachNumeric(10, 9, func(a, b interface{}) {
 		Expect(a).GreaterOrEqual.To(b)
@@ -60,6 +75,12 @@ func (_ *ExpectNumericTests) GreaterOrEqual_Success() {
 	Expect(float64(-3.33)).GreaterOrEqual.To(float64(-3.33))
 }
 
+func (_ *ExpectNumericTests) GreaterOrEqual_Success_Time() {
+	now := time.Now()
+	Expect(now).GreaterOrEqual.To(now.Add(time.Second * -2))
+	Expect(now).GreaterOrEqual.To(now)
+}
+
 func (_ *ExpectNumericTests) GreaterOrEqual_Failures() {
 	failing("expected 9 to be greater or equal to 10", 9, func() {
 		eachNumeric(9, 10, func(a, b interface{}) {
@@ -70,6 +91,12 @@ func (_ *ExpectNumericTests) GreaterOrEqual_Failures() {
 	failing("expected -2.3 to be greater or equal to -2.299", 2, func() {
 		Expect(float32(-2.3)).GreaterOrEqual.To(float32(-2.299))
 		Expect(float64(-2.3)).GreaterOrEqual.To(float64(-2.299))
+	})
+}
+
+func (_ *ExpectNumericTests) GreaterOrEqual_Failure_Time() {
+	failing("expected 2014-12-07 11:18:10 +0700 ICT to be greater or equal to 2014-12-07 11:18:11 +0700 ICT", 1, func() {
+		Expect(time.Unix(1417925890, 0)).GreaterOrEqual.To(time.Unix(1417925891, 0))
 	})
 }
 
@@ -120,6 +147,10 @@ func (_ *ExpectNumericTests) Less_Success() {
 	Expect(float64(-3.34)).Less.Than(float64(-3.33339))
 }
 
+func (_ *ExpectNumericTests) Less_Success_Time() {
+	Expect(time.Now()).Less.Than(time.Now().Add(time.Second * 2))
+}
+
 func (_ *ExpectNumericTests) Less_Failures() {
 	failing("expected 23 to be less than 22", 9, func() {
 		eachNumeric(23, 22, func(a, b interface{}) {
@@ -152,6 +183,16 @@ func (_ *ExpectNumericTests) Less_Failures() {
 	})
 }
 
+func (_ *ExpectNumericTests) Less_Failure_Time() {
+	failing("expected 2014-12-07 11:18:11 +0700 ICT to be less than 2014-12-07 11:18:10 +0700 ICT", 1, func() {
+		Expect(time.Unix(1417925891, 0)).Less.Than(time.Unix(1417925890, 0))
+	})
+
+	failing("expected 2014-12-07 11:18:10 +0700 ICT to be less than 2014-12-07 11:18:10 +0700 ICT", 1, func() {
+		Expect(time.Unix(1417925890, 0)).Less.Than(time.Unix(1417925890, 0))
+	})
+}
+
 func (_ *ExpectNumericTests) LessOrEqual_Success() {
 	eachNumeric(9, 10, func(a, b interface{}) {
 		Expect(a).LessOrEqual.To(b)
@@ -166,6 +207,12 @@ func (_ *ExpectNumericTests) LessOrEqual_Success() {
 	Expect(float64(-3.33)).LessOrEqual.To(float64(-3.33))
 }
 
+func (_ *ExpectNumericTests) LessOrEqual_Success_Time() {
+	now := time.Now()
+	Expect(now).LessOrEqual.To(now.Add(time.Second * 2))
+	Expect(now).LessOrEqual.To(now)
+}
+
 func (_ *ExpectNumericTests) LessOrEqual_Failures() {
 	failing("expected 3 to be less or equal to 1", 9, func() {
 		eachNumeric(3, 1, func(a, b interface{}) {
@@ -176,6 +223,12 @@ func (_ *ExpectNumericTests) LessOrEqual_Failures() {
 	failing("expected -2.291 to be less or equal to -2.292", 2, func() {
 		Expect(float32(-2.291)).LessOrEqual.To(float32(-2.292))
 		Expect(float64(-2.291)).LessOrEqual.To(float64(-2.292))
+	})
+}
+
+func (_ *ExpectNumericTests) LessOrEqual_Failure_Time() {
+	failing("expected 2014-12-07 11:18:11 +0700 ICT to be less or equal to 2014-12-07 11:18:10 +0700 ICT", 1, func() {
+		Expect(time.Unix(1417925891, 0)).LessOrEqual.To(time.Unix(1417925890, 0))
 	})
 }
 

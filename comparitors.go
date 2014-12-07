@@ -2,6 +2,7 @@ package expect
 
 import (
 	"reflect"
+	"time"
 )
 
 const (
@@ -43,17 +44,31 @@ func NotEqualsComparitor(k reflect.Kind, a, b interface{}) bool {
 }
 
 func LessThanComparitor(k reflect.Kind, a, b interface{}) bool {
+	if t, ok := a.(time.Time); ok {
+		return t.Before(b.(time.Time))
+	}
 	return Comparitors[k][LessThan](a, b)
 }
 
 func LessThanOrEqualToComparitor(k reflect.Kind, a, b interface{}) bool {
+	if t, ok := a.(time.Time); ok {
+		bt := b.(time.Time)
+		return t.Before(bt) || t == bt
+	}
 	return EqualsComparitor(k, a, b) || Comparitors[k][LessThan](a, b)
 }
 
 func GreaterThanComparitor(k reflect.Kind, a, b interface{}) bool {
+	if t, ok := a.(time.Time); ok {
+		return t.After(b.(time.Time))
+	}
 	return !EqualsComparitor(k, a, b) && !Comparitors[k][LessThan](a, b)
 }
 
 func GreaterOrEqualToComparitor(k reflect.Kind, a, b interface{}) bool {
+	if t, ok := a.(time.Time); ok {
+		bt := b.(time.Time)
+		return t.After(bt) || t == bt
+	}
 	return !Comparitors[k][LessThan](a, b)
 }

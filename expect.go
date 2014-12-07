@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"reflect"
 	"strings"
+	"time"
 )
 
 type JSON string
@@ -245,6 +246,11 @@ func newThanAssertion(actual interface{}, c comparitor, toDisplay, thanDisplay s
 func (a *ThanAssertion) Than(expected interface{}) PostHandler {
 	actual := a.to.actual
 	a.to.invert = a.invert
+
+	if _, ok := actual.(time.Time); ok {
+		return a.to.To(expected)
+	}
+
 	if IsNumeric(actual) == false {
 		Errorf("cannot use %s for type %s", a.display, reflect.ValueOf(actual).Kind())
 		return FailureHandler
