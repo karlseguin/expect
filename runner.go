@@ -71,12 +71,13 @@ func Expectify(suite interface{}, t *testing.T) {
 			continue
 		}
 		os.Stdout = stdout
-		res = runner.Start(name)
+		typeName := sv.Elem().Type().String()
+		res = runner.Start(name, typeName)
 		var f = func() {
 			method.Func.Call([]reflect.Value{sv})
 			if runner.End() == false || testing.Verbose() {
 				if announced == false {
-					color.Printf("\n@!%s@|\n", sv.Elem().Type().String())
+					color.Printf("\n@!%s@|\n", typeName)
 					announced = true
 				}
 				res.Report()
@@ -94,7 +95,13 @@ func Expectify(suite interface{}, t *testing.T) {
 	}
 	if runner.Passed() == false {
 		os.Stdout = stdout
-		fmt.Println("")
+		fmt.Println("\nFailure summary")
+		for _, r := range runner.results {
+			if r.Passed() == false {
+				r.Summary()
+			}
+		}
+		fmt.Println()
 		os.Stdout = silentOut
 		t.Fail()
 	}
@@ -109,9 +116,10 @@ type Runner struct {
 	current *result
 }
 
-func (r *Runner) Start(name string) *result {
+func (r *Runner) Start(name string, typeName string) *result {
 	r.current = &result{
 		method:   name,
+		typeName: typeName,
 		start:    time.Now(),
 		failures: make([]*Failure, 0, 3),
 	}
@@ -176,6 +184,7 @@ func (r *Runner) ErrorMessage(format string, args ...interface{}) {
 type result struct {
 	method      string
 	failures    []*Failure
+	typeName    string
 	start       time.Time
 	end         time.Time
 	skipMessage string
@@ -209,14 +218,26 @@ func (r *result) Report() {
 	}
 	info := fmt.Sprintf(" %-70s%dms", r.method, r.end.Sub(r.start).Nanoseconds()/1000000)
 	if r.skip {
-		color.Println(" @y⸚" + info)
+		color.Println(" @y⸚", info)
 		color.Println("   @." + r.skipMessage)
 	} else if r.Passed() {
-		color.Println(" @g✓" + info)
+		color.Println(" @g✓", info)
 	} else {
-		color.Println(" @r×" + info)
+		color.Println(" @r×", info)
 		for _, failure := range r.failures {
-			color.Printf("   @.%-40s%s\n", failure.location, failure.message)
+			color.Printf("    @.%-40s%s\n", failure.location, failure.message)
 		}
+	}
+}
+
+func (r *result) Summary() {
+	info := fmt.Sprintf(" %s.%-40s", r.typeName, r.method)
+	if r.skip {
+		color.Println(" @y⸚", info)
+	} else if r.Passed() {
+		color.Println(" @g✓", info)
+	} else {
+		color.Print(" @r×", info)
+		color.Printf("%2d\n", len(r.failures))
 	}
 }
