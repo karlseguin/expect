@@ -61,6 +61,7 @@ func Fail(format string, args ...interface{}) {
 
 func Skip(format string, args ...interface{}) {
 	runner.Skip(format, args...)
+	panic(endTestErr)
 }
 
 func expect(actual interface{}, others []interface{}, includeNot bool) *Expectation {

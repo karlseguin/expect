@@ -168,6 +168,11 @@ func (_ *ExpectTests) Skip_Before() {
 	Fail("failed")
 }
 
+func (_ *ExpectTests) Skip_NoPanic() {
+	Skip("the skip reason")
+	panic("should be swallowed")
+}
+
 func (_ *ExpectTests) AltenrativeSyntax() {
 	Expect(true).ToEqual(true)
 	Expect(123).Not.ToEqual(11)

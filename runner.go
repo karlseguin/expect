@@ -21,6 +21,7 @@ var (
 	stdout     = os.Stdout
 	silentOut  *os.File
 	beforeEach = make([]func(), 0, 2)
+	endTestErr = new(error)
 )
 
 func init() {
@@ -37,6 +38,9 @@ func Expectify(suite interface{}, t *testing.T) {
 	var res *result
 	defer func() {
 		if err := recover(); err != nil {
+			if err == endTestErr {
+				return
+			}
 			os.Stdout = stdout
 			if res != nil {
 				res.Report()
