@@ -57,6 +57,11 @@ func Expect(actual interface{}, others ...interface{}) *Expectation {
 
 func Fail(format string, args ...interface{}) {
 	Errorf(format, args...)
+	panic(endTestErr)
+}
+
+func Error(format string, args ...interface{}) {
+	Errorf(format, args...)
 }
 
 func Skip(format string, args ...interface{}) {
