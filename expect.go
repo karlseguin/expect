@@ -60,10 +60,6 @@ func Fail(format string, args ...interface{}) {
 	panic(endTestErr)
 }
 
-func Error(format string, args ...interface{}) {
-	Errorf(format, args...)
-}
-
 func Skip(format string, args ...interface{}) {
 	runner.Skip(format, args...)
 	panic(endTestErr)
