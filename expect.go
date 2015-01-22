@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"strings"
 	"time"
+	"fmt"
 )
 
 type JSON string
@@ -127,7 +128,7 @@ func equal(assertion *ToAssertion, a, b interface{}) bool {
 	aIsNil := IsNil(a)
 	if b == NotNil {
 		if aIsNil {
-			showError(a, "", false, "to be nil")
+			showError(a, "", false, "to be nil", false)
 			return false
 		} else {
 			return true
@@ -136,7 +137,7 @@ func equal(assertion *ToAssertion, a, b interface{}) bool {
 	bIsNil := IsNil(b)
 	if aIsNil || bIsNil {
 		if (aIsNil == bIsNil) == assertion.invert {
-			showError(a, b, assertion.invert, assertion.display)
+			showError(a, b, assertion.invert, assertion.display, false)
 			return false
 		}
 		return true
@@ -176,6 +177,7 @@ func newToAssertion(a interface{}, c comparitor, display string) *ToAssertion {
 func (a *ToAssertion) To(expected interface{}) PostHandler {
 	actual := a.actual
 
+	isJson := false
 	if j, ok := expected.(JSON); ok {
 		var a []byte
 		switch t := actual.(type) {
@@ -195,6 +197,7 @@ func (a *ToAssertion) To(expected interface{}) PostHandler {
 			Errorf("invalid json %v", string(j))
 			return FailureHandler
 		}
+		isJson = true
 	}
 
 	kind, ok := SameKind(actual, expected)
@@ -214,19 +217,26 @@ func (a *ToAssertion) To(expected interface{}) PostHandler {
 		expected = ToString(expected)
 	}
 	if a.comparitor(kind, actual, expected) == a.invert {
-		showError(actual, expected, a.invert, a.display)
+		if isJson {
+			actual, expected = convertFromJson(actual), convertFromJson(expected)
+		}
+		showError(actual, expected, a.invert, a.display, !isJson)
 		return FailureHandler
 	}
 	return SuccessHandler
 }
 
-func showError(actual, expected interface{}, invert bool, display string) {
+func showError(actual, expected interface{}, invert bool, display string, escape bool) {
 	var inversion string
 	if invert {
 		inversion = "not "
 	}
 	if _, ok := actual.(string); ok {
-		Errorf("expected %q %s%s %q", actual, inversion, display, expected)
+		if escape == true {
+			Errorf("expected %q %s%s %q", actual, inversion, display, expected)
+		} else {
+			Errorf("expected %s %s%s %s", actual, inversion, display, expected)
+		}
 	} else {
 		Errorf("expected %v %s%s %v", actual, inversion, display, expected)
 	}
@@ -297,4 +307,10 @@ func convertToJson(bytes []byte) (interface{}, bool) {
 		return bytes, false
 	}
 	return m, true
+}
+
+func convertFromJson(value interface{}) string {
+	fmt.Println(value)
+	bytes, _ := json.MarshalIndent(value, "", "   ")
+	return string(bytes)
 }
