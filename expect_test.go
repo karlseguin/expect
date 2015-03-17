@@ -20,7 +20,7 @@ func Test_Expect(t *testing.T) {
 	Expectify(new(ExpectTests), t)
 }
 
-func (_ *ExpectTests) Equal_Success() {
+func (_ ExpectTests) Equal_Success() {
 	Expect("abc").To.Equal("abc")
 	Expect(true).To.Equal(true)
 	Expect(false).To.Equal(false)
@@ -29,7 +29,7 @@ func (_ *ExpectTests) Equal_Success() {
 	Expect(map[string]int{"a": 1, "b": 2}).To.Equal(map[string]int{"a": 1, "b": 2})
 }
 
-func (_ *ExpectTests) Equal_Failures() {
+func (_ ExpectTests) Equal_Failures() {
 	failing(`expected "abc" to be equal to "123"`, 1, func() {
 		Expect("abc").To.Equal("123")
 	})
@@ -48,11 +48,11 @@ func (_ *ExpectTests) Equal_Failures() {
 	// })
 }
 
-func (_ *ExpectTests) NotEqual_Success() {
+func (_ ExpectTests) NotEqual_Success() {
 	Expect("abc").Not.To.Equal("123")
 }
 
-func (_ *ExpectTests) NoEqual_Failures() {
+func (_ ExpectTests) NoEqual_Failures() {
 	failing(`expected "123" not to equal "123"`, 1, func() {
 		Expect("123").Not.To.Equal("123")
 	})
@@ -66,7 +66,7 @@ func (_ *ExpectTests) NoEqual_Failures() {
 	})
 }
 
-func (_ *ExpectTests) Contain_Success() {
+func (_ ExpectTests) Contain_Success() {
 	Expect("abc").To.Contain("bc")
 	Expect("abc").Not.To.Contain("99")
 
@@ -81,7 +81,7 @@ func (_ *ExpectTests) Contain_Success() {
 	Expect([]byte{1, 2, 3}).Not.To.Contain([]byte{2, 3, 4})
 }
 
-func (_ *ExpectTests) Contain_Failures() {
+func (_ ExpectTests) Contain_Failures() {
 	failing("abc does not contain zz", 1, func() {
 		Expect("abc").To.Contain("zz")
 	})
@@ -111,11 +111,11 @@ func (_ *ExpectTests) Contain_Failures() {
 	})
 }
 
-func (_ *ExpectTests) ExpectMulipleValues_Success() {
+func (_ ExpectTests) ExpectMulipleValues_Success() {
 	Expect(1, true, "over 9000").To.Equal(1, true, "over 9000")
 }
 
-func (_ *ExpectTests) ExpectMulipleValues_Failure() {
+func (_ ExpectTests) ExpectMulipleValues_Failure() {
 	failing("mismatch number of values and expectations 3 != 2", 1, func() {
 		Expect(1, true, "over 9000").To.Equal(1, true)
 	})
@@ -130,50 +130,50 @@ func (_ *ExpectTests) ExpectMulipleValues_Failure() {
 	})
 }
 
-func (_ *ExpectTests) ExpectNil_Success() {
-	var t *ExpectTests
+func (_ ExpectTests) ExpectNil_Success() {
+	var n *string
 	Expect(nil).To.Equal(nil)
-	Expect(t).To.Equal(nil)
-	Expect(t).To.Equal(t)
+	Expect(n).To.Equal(nil)
+	Expect(n).To.Equal(n)
 	Expect(nil).Not.To.Equal(32)
-	Expect(32).Not.To.Equal(t)
+	Expect(32).Not.To.Equal(n)
 }
 
-func (_ *ExpectTests) ExpectNil_Failure() {
-	var t *ExpectTests
+func (_ ExpectTests) ExpectNil_Failure() {
+	var n *string
 	failing("expected <nil> to be equal to 44", 2, func() {
 		Expect(nil).To.Equal(44)
-		Expect(t).To.Equal(44)
+		Expect(n).To.Equal(44)
 	})
 	failing("expected <nil> not to equal <nil>", 3, func() {
 		Expect(nil).Not.To.Equal(nil)
-		Expect(nil).Not.To.Equal(t)
-		Expect(t).Not.To.Equal(t)
+		Expect(nil).Not.To.Equal(n)
+		Expect(n).Not.To.Equal(n)
 	})
 }
 
-func (_ *ExpectTests) Fail() {
+func (_ ExpectTests) Fail() {
 	failing("the failure reason 123", 1, func() {
 		Fail("the failure reason %d", 123)
 	})
 }
 
-func (_ *ExpectTests) Skip_After() {
+func (_ ExpectTests) Skip_After() {
 	Fail("failed")
 	Skip("the skip reason %d", 9001)
 }
 
-func (_ *ExpectTests) Skip_Before() {
+func (_ ExpectTests) Skip_Before() {
 	Skip("the skip reason")
 	Fail("failed")
 }
 
-func (_ *ExpectTests) Skip_NoPanic() {
+func (_ ExpectTests) Skip_NoPanic() {
 	Skip("the skip reason")
 	panic("should be swallowed")
 }
 
-func (_ *ExpectTests) AltenrativeSyntax() {
+func (_ ExpectTests) AltenrativeSyntax() {
 	Expect(true).ToEqual(true)
 	Expect(123).Not.ToEqual(11)
 	Expect("it's over", 9000).ToEqual("it's over", 9000)
@@ -194,13 +194,13 @@ func (_ *ExpectTests) AltenrativeSyntax() {
 	Expect(12).Not.LessOrEqualTo(1)
 }
 
-func (_ *ExpectTests) Json() {
+func (_ ExpectTests) Json() {
 	Expect(`{"about":true}`).To.Equal(JSON(`{
 		"about": true
 	}`))
 }
 
-func (_ *ExpectTests) GlobalBeforEEach() {
+func (_ ExpectTests) GlobalBeforEEach() {
 	Expect(beforeEachCalled).Greater.Than(0)
 }
 
