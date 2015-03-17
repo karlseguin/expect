@@ -36,7 +36,7 @@ func (_ CalculatorTests) AddsTwoNumbers() {
 }
 ```
 
-You can also use `Skip(format, args...)` and `Fail(format, args...)` to either skip a test, or cause a test to fail.
+You can also use `Skip(format, args...)` and `Fail(format, args...)` to either skip a test or cause a test to fail.
 
 ## Running
 
@@ -61,6 +61,23 @@ All expectations can be reversed by starting the chain with `Not.`:
 * `Not.GreaterOrEqual.To(x)` or `Not.GreaterOrEqualTo(x)`
 * `Not.Less.Than(x)` or `Not.LessThan(x)`
 * `Not.LessOrEqual.To(x)` or `Not.LessOrEqualTo(x)`
+
+### Eql
+
+The `Equal` method is strict. This will fail:
+
+```go
+  //fails
+  Expect(uint32(449)).To.Equal(449)
+```
+
+`Eql` can be used to do implicit type conversion for common types (notably between the various integer types, as well as []byte <-> string).
+
+```go
+  //passes
+  Expect(uint32(449)).To.Eql(449)
+  Expect([]byte{65, 66}).To.Eql("AB")
+```
 
 ### JSON
 

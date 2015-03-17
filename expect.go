@@ -28,6 +28,10 @@ func (e *Expectation) ToEqual(expected interface{}, others ...interface{}) PostH
 	return e.To.Equal(expected, others...)
 }
 
+func (e *Expectation) ToEql(expected interface{}, others ...interface{}) PostHandler {
+	return e.To.Eql(expected, others...)
+}
+
 func (e *Expectation) GreaterThan(expected interface{}) PostHandler {
 	return e.Greater.Than(expected)
 }
@@ -122,6 +126,17 @@ func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) PostH
 		return FailureHandler
 	}
 	return SuccessHandler
+}
+
+func (e *ToExpectation) Eql(expected interface{}, others ...interface{}) PostHandler {
+	if len(others) == len(e.others) {
+		expected = coerce(e.actual, expected)
+		for i := 0; i < len(others); i++ {
+			others[i] = coerce(e.others[i], others[i])
+		}
+	}
+
+	return e.Equal(expected, others...)
 }
 
 func equal(assertion *ToAssertion, a, b interface{}) bool {
@@ -313,4 +328,13 @@ func convertFromJson(value interface{}) string {
 	fmt.Println(value)
 	bytes, _ := json.MarshalIndent(value, "", "   ")
 	return string(bytes)
+}
+
+func coerce(actual interface{}, expected interface{}) interface{} {
+	at := reflect.TypeOf(actual)
+	et := reflect.TypeOf(expected)
+	if et.ConvertibleTo(at) {
+		return reflect.ValueOf(expected).Convert(at).Interface()
+	}
+	return expected
 }

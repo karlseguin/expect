@@ -204,6 +204,21 @@ func (_ ExpectTests) GlobalBeforEEach() {
 	Expect(beforeEachCalled).Greater.Than(0)
 }
 
+func (_ ExpectTests) EqlForInts() {
+	Expect(uint16(1)).To.Eql(1)
+	Expect(uint32(2)).To.Eql(2)
+	Expect(uint64(3)).To.Eql(3)
+	Expect(int16(4)).To.Eql(4)
+	Expect(int32(5)).To.Eql(5)
+	Expect(int64(6)).To.Eql(6)
+	Expect(byte(7)).To.Eql(7)
+}
+
+func (_ ExpectTests) EqlForStringAndBytes() {
+	Expect([]byte{65, 66}).To.Eql("AB")
+	Expect("CD").To.Eql([]byte{67, 68})
+}
+
 func failing(expected string, count int, f func()) {
 	actuals := make([]string, 0, 5)
 	Errorf = func(format string, args ...interface{}) {
