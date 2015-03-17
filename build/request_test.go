@@ -2,7 +2,7 @@ package build
 
 import (
 	"compress/gzip"
-	e "github.com/karlseguin/expect"
+	e "gopkg.in/karlseguin/expect.v1"
 	"io"
 	"net/http"
 	"testing"

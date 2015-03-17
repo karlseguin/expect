@@ -3,10 +3,10 @@ package expect
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"strings"
 	"time"
-	"fmt"
 )
 
 type JSON string

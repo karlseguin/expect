@@ -18,7 +18,7 @@ func Test_Caculator(t *testing.T) {
   Expectify(new(CalculatorTests), t)
 }
 
-func (_ *CalculatorTests) AddsTwoNumbers() {
+func (_ CalculatorTests) AddsTwoNumbers() {
   c := new(Calculator)
   Expect(c.Add(4, 8)).To.Equal(12)
   Expect(c.Add(10, 2)).Greater.Than(11)
@@ -73,7 +73,7 @@ Expect(`{"spice":"must flow"}`).To.Equal(JSON(`
 }`))
 ```
 
-The helper makes it possible to write a expectations which ignore white spaces and are thus easier to write, read and maintain. Internally, when the `JSON` helper is used, both values are (actual and expected) are unmarshalled using the encoding/json library (essentially converted to an map[string]interface{}) and a then compared in this form.
+The helper makes it possible to write a expectations which ignore white spaces and are thus easier to write, read and maintain. Internally, when the `JSON` helper is used, both values (actual and expected) are unmarshalled using the encoding/json library (essentially converted to an map[string]interface{}) and a then compared in this form.
 
 ### Contains
 
