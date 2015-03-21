@@ -39,6 +39,7 @@ func Expectify(suite interface{}, t *testing.T) {
 	defer func() {
 		if err := recover(); err != nil {
 			if err == endTestErr {
+				finish(t)
 				return
 			}
 			os.Stdout = stdout
@@ -97,6 +98,10 @@ func Expectify(suite interface{}, t *testing.T) {
 		}
 		os.Stdout = silentOut
 	}
+	finish(t)
+}
+
+func finish(t *testing.T) {
 	if runner.Passed() == false {
 		os.Stdout = stdout
 		fmt.Println("\nFailure summary")
