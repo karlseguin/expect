@@ -114,6 +114,13 @@ Expect(res.Code).To.Equal(404).Message("path: %s", path)
 
 This can be useful when you're testing the same code against different inputs (probably in a `for` loop).
 
+Given a message with a layout but not arguments, `Message` will inject the actual
+and expected values.
+
+```go
+Expect(res.Code).To.Equal(404).Message("Expected %d got %d")
+```
+
 ## Multiple Values
 
 `Expect` throws away all but the first value. This is convenient when a method returns an error which you don't care to test:

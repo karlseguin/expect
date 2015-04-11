@@ -123,7 +123,7 @@ func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) PostH
 	}
 
 	if failed {
-		return FailureHandler
+		return NewFailureHandler(expected, e.actual)
 	}
 	return SuccessHandler
 }
@@ -165,11 +165,11 @@ func (e *ToExpectation) Contain(expected interface{}) PostHandler {
 	c := contains(e.actual, expected)
 	if e.invert == false && c == false {
 		Errorf("%v does not contain %v", e.actual, expected)
-		return FailureHandler
+		return NewFailureHandler(expected, e.actual)
 	}
 	if e.invert == true && c == true {
 		Errorf("%v contains %v", e.actual, expected)
-		return FailureHandler
+		return NewFailureHandler(expected, e.actual)
 	}
 	return SuccessHandler
 }
@@ -190,7 +190,7 @@ func newToAssertion(a interface{}, c comparitor, display string) *ToAssertion {
 }
 
 func (a *ToAssertion) To(expected interface{}) PostHandler {
-	actual := a.actual
+	original, actual := a.actual, a.actual
 
 	isJson := false
 	if j, ok := expected.(JSON); ok {
@@ -202,15 +202,15 @@ func (a *ToAssertion) To(expected interface{}) PostHandler {
 			a = []byte(t)
 		default:
 			Errorf("JSON() helper can only be used with a string or []byte actual")
-			return FailureHandler
+			return NewFailureHandler(expected, original)
 		}
 		if actual, ok = convertToJson(a); ok == false {
 			Errorf("invalid json %v", string(a))
-			return FailureHandler
+			return NewFailureHandler(expected, original)
 		}
 		if expected, ok = convertToJson([]byte(j)); ok == false {
 			Errorf("invalid json %v", string(j))
-			return FailureHandler
+			return NewFailureHandler(expected, original)
 		}
 		isJson = true
 	}
@@ -218,7 +218,7 @@ func (a *ToAssertion) To(expected interface{}) PostHandler {
 	kind, ok := SameKind(actual, expected)
 	if ok == false {
 		Errorf("expected %v %s %v - type mismatch %s != %s", actual, a.display, expected, reflect.ValueOf(actual).Kind(), reflect.ValueOf(expected).Kind())
-		return FailureHandler
+		return NewFailureHandler(expected, a.actual)
 	}
 	if IsInt(actual) {
 		actual, expected = ToInt64(actual, expected)
@@ -236,7 +236,7 @@ func (a *ToAssertion) To(expected interface{}) PostHandler {
 			actual, expected = convertFromJson(actual), convertFromJson(expected)
 		}
 		showError(actual, expected, a.invert, a.display, !isJson)
-		return FailureHandler
+		return NewFailureHandler(expected, original)
 	}
 	return SuccessHandler
 }
@@ -280,11 +280,11 @@ func (a *ThanAssertion) Than(expected interface{}) PostHandler {
 
 	if IsNumeric(actual) == false {
 		Errorf("cannot use %s for type %s", a.display, reflect.ValueOf(actual).Kind())
-		return FailureHandler
+		return NewFailureHandler(expected, actual)
 	}
 	if IsNumeric(expected) == false {
 		Errorf("cannot use %s for type %s", a.display, reflect.ValueOf(expected).Kind())
-		return FailureHandler
+		NewFailureHandler(expected, actual)
 	}
 	return a.to.To(expected)
 }
