@@ -3,7 +3,6 @@ package expect
 import (
 	"flag"
 	"fmt"
-	"github.com/wsxiaoys/terminal/color"
 	"os"
 	"reflect"
 	"regexp"
@@ -11,6 +10,8 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/wsxiaoys/terminal/color"
 )
 
 var (
@@ -26,7 +27,9 @@ var (
 
 func init() {
 	flag.Parse()
-	pattern = regexp.MustCompile("(?i)" + *matchFlag)
+	if len(*matchFlag) != 0 {
+		pattern = regexp.MustCompile("(?i)" + *matchFlag)
+	}
 	if *showStdout == true {
 		silentOut = stdout
 	}
@@ -72,11 +75,17 @@ func Expectify(suite interface{}, t *testing.T) {
 			continue
 		}
 		name = method.Name
-		if pattern.MatchString(name) == false || method.Type.NumIn() != 1 {
+		typeName := sv.Elem().Type().String()
+
+		if method.Type.NumIn() != 1 {
 			continue
 		}
+
+		if pattern != nil && pattern.MatchString(name) == false && pattern.MatchString(typeName) == false {
+			continue
+		}
+
 		os.Stdout = stdout
-		typeName := sv.Elem().Type().String()
 		res = runner.Start(name, typeName)
 		var f = func() {
 			method.Func.Call([]reflect.Value{sv})
