@@ -52,12 +52,12 @@ func (_ *ExpectNumericTests) Greater_Failures() {
 }
 
 func (_ *ExpectNumericTests) Greater_Failure_Time() {
-	failing("expected 2014-12-07 11:18:10 +0700 ICT to be greater than 2014-12-07 11:18:11 +0700 ICT", 1, func() {
-		Expect(time.Unix(1417925890, 0)).Greater.Than(time.Unix(1417925891, 0))
+	failing("expected 2014-12-07 04:18:10 +0000 UTC to be greater than 2014-12-07 04:18:11 +0000 UTC", 1, func() {
+		Expect(time.Unix(1417925890, 0).UTC()).Greater.Than(time.Unix(1417925891, 0).UTC())
 	})
 
-	failing("expected 2014-12-07 11:18:10 +0700 ICT to be greater than 2014-12-07 11:18:10 +0700 ICT", 1, func() {
-		Expect(time.Unix(1417925890, 0)).Greater.Than(time.Unix(1417925890, 0))
+	failing("expected 2014-12-07 04:18:10 +0000 UTC to be greater than 2014-12-07 04:18:10 +0000 UTC", 1, func() {
+		Expect(time.Unix(1417925890, 0).UTC()).Greater.Than(time.Unix(1417925890, 0).UTC())
 	})
 }
 
@@ -95,8 +95,8 @@ func (_ *ExpectNumericTests) GreaterOrEqual_Failures() {
 }
 
 func (_ *ExpectNumericTests) GreaterOrEqual_Failure_Time() {
-	failing("expected 2014-12-07 11:18:10 +0700 ICT to be greater or equal to 2014-12-07 11:18:11 +0700 ICT", 1, func() {
-		Expect(time.Unix(1417925890, 0)).GreaterOrEqual.To(time.Unix(1417925891, 0))
+	failing("expected 2014-12-07 04:18:10 +0000 UTC to be greater or equal to 2014-12-07 04:18:11 +0000 UTC", 1, func() {
+		Expect(time.Unix(1417925890, 0).UTC()).GreaterOrEqual.To(time.Unix(1417925891, 0).UTC())
 	})
 }
 
@@ -184,12 +184,12 @@ func (_ *ExpectNumericTests) Less_Failures() {
 }
 
 func (_ *ExpectNumericTests) Less_Failure_Time() {
-	failing("expected 2014-12-07 11:18:11 +0700 ICT to be less than 2014-12-07 11:18:10 +0700 ICT", 1, func() {
-		Expect(time.Unix(1417925891, 0)).Less.Than(time.Unix(1417925890, 0))
+	failing("expected 2014-12-07 04:18:11 +0000 UTC to be less than 2014-12-07 04:18:10 +0000 UTC", 1, func() {
+		Expect(time.Unix(1417925891, 0).UTC()).Less.Than(time.Unix(1417925890, 0).UTC())
 	})
 
-	failing("expected 2014-12-07 11:18:10 +0700 ICT to be less than 2014-12-07 11:18:10 +0700 ICT", 1, func() {
-		Expect(time.Unix(1417925890, 0)).Less.Than(time.Unix(1417925890, 0))
+	failing("expected 2014-12-07 04:18:10 +0000 UTC to be less than 2014-12-07 04:18:10 +0000 UTC", 1, func() {
+		Expect(time.Unix(1417925890, 0).UTC()).Less.Than(time.Unix(1417925890, 0).UTC())
 	})
 }
 
@@ -227,8 +227,8 @@ func (_ *ExpectNumericTests) LessOrEqual_Failures() {
 }
 
 func (_ *ExpectNumericTests) LessOrEqual_Failure_Time() {
-	failing("expected 2014-12-07 11:18:11 +0700 ICT to be less or equal to 2014-12-07 11:18:10 +0700 ICT", 1, func() {
-		Expect(time.Unix(1417925891, 0)).LessOrEqual.To(time.Unix(1417925890, 0))
+	failing("expected 2014-12-07 04:18:11 +0000 UTC to be less or equal to 2014-12-07 04:18:10 +0000 UTC", 1, func() {
+		Expect(time.Unix(1417925891, 0).UTC()).LessOrEqual.To(time.Unix(1417925890, 0).UTC())
 	})
 }
 
