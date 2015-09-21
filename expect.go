@@ -3,7 +3,6 @@ package expect
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"reflect"
 	"strings"
 	"time"
@@ -325,7 +324,6 @@ func convertToJson(bytes []byte) (interface{}, bool) {
 }
 
 func convertFromJson(value interface{}) string {
-	fmt.Println(value)
 	bytes, _ := json.MarshalIndent(value, "", "   ")
 	return string(bytes)
 }
