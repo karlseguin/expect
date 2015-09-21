@@ -196,6 +196,22 @@ func init() {
 }
 ```
 
+## Summary File
+If you have many tests, you may find it cumbersome to run with -v and/or -vv, yet still want
+a brief summary beyond what Go's test runner provides (I always worry that everything passed because nothing ran). However, because of the way that Go's running takes over stdout and the fact that it potentially launches multiple processes, writing a final summary is not something we can do as easily as we'd like.
+
+What we can do is use the `-summary <PATH>` flag and provide a path where summary data will be stored / updated. Therefore, even if multiple processes are launched, and even if we can't output to stdout, with a bit of work invoking the tests, we can get a summary. For example, I recommend a simple Makefile:
+
+```Makefile
+    TEMPFILE := $(shell mktemp -u -t testsummary)
+
+    test:
+      go test ./... -summary $(TEMPFILE)
+      @if [ -a $(TEMPFILE) ] ; \
+      then \
+        cat $(TEMPFILE); rm $(TEMPFILE) ;\
+      fi;
+
 # Mocks
 
 The `mock` sub-package provides mock objects and buiders for common standard library components.

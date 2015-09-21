@@ -3,10 +3,12 @@ package expect
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"reflect"
 	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -15,14 +17,15 @@ import (
 )
 
 var (
-	showStdout = flag.Bool("vv", false, "Regular expression selecting which tests to run")
-	matchFlag  = flag.String("m", "", "Regular expression selecting which tests to run")
-	pattern    *regexp.Regexp
-	runner     *Runner
-	stdout     = os.Stdout
-	silentOut  *os.File
-	beforeEach = make([]func(), 0, 2)
-	endTestErr = new(error)
+	showStdout  = flag.Bool("vv", false, "turn on stdout")
+	matchFlag   = flag.String("m", "", "Regular expression selecting which tests to run")
+	summaryPath = flag.String("summary", "", "Path to write a summary file to")
+	pattern     *regexp.Regexp
+	runner      *Runner
+	stdout      = os.Stdout
+	silentOut   *os.File
+	beforeEach  = make([]func(), 0, 2)
+	endTestErr  = new(error)
 )
 
 func init() {
@@ -111,7 +114,14 @@ func Expectify(suite interface{}, t *testing.T) {
 }
 
 func finish(t *testing.T) {
-	if runner.Passed() == false {
+	passed := 0
+	for _, result := range runner.results {
+		if result.Passed() {
+			passed++
+		}
+	}
+	failed := len(runner.results) - passed
+	if failed != 0 {
 		os.Stdout = stdout
 		fmt.Println("\nFailure summary")
 		for _, r := range runner.results {
@@ -122,6 +132,40 @@ func finish(t *testing.T) {
 		fmt.Println()
 		os.Stdout = silentOut
 		t.Fail()
+	}
+	if path := *summaryPath; len(path) != 0 {
+		updatePersistedSummary(path, passed, failed)
+	}
+}
+
+func updatePersistedSummary(path string, passed int, failed int) {
+	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	buffer := make([]byte, 128)
+	n, err := file.Read(buffer)
+	if err != nil && err != io.EOF {
+		panic(err)
+	} else if n > 0 {
+		file.Truncate(0)
+		found := regexp.MustCompile(`(\d+) passed\s*(\d+) failed`).FindAllStringSubmatch(string(buffer), 2)
+		if len(found) == 1 && len(found[0]) == 3 {
+			if p, err := strconv.Atoi(found[0][1]); err == nil {
+				passed += p
+			}
+			if f, err := strconv.Atoi(found[0][2]); err == nil {
+				failed += f
+			}
+		}
+	}
+
+	color.Fprintf(file, "\n* @g%d passed\n", passed)
+	if failed > 0 {
+		color.Fprintf(file, "* @r%d failed\n", passed)
+	} else {
+		file.Write([]byte("* 0 failed\n"))
 	}
 }
 
@@ -150,15 +194,6 @@ func (r *Runner) End() bool {
 	passed := r.current.Passed()
 	r.current = nil
 	return passed
-}
-
-func (r *Runner) Passed() bool {
-	for _, result := range r.results {
-		if result.Passed() == false {
-			return false
-		}
-	}
-	return true
 }
 
 func (r *Runner) Skip(format string, args ...interface{}) {
