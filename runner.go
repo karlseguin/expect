@@ -3,7 +3,6 @@ package expect
 import (
 	"flag"
 	"fmt"
-	"io"
 	"os"
 	"reflect"
 	"regexp"
@@ -17,15 +16,16 @@ import (
 )
 
 var (
-	showStdout  = flag.Bool("vv", false, "turn on stdout")
-	matchFlag   = flag.String("m", "", "Regular expression selecting which tests to run")
-	summaryPath = flag.String("summary", "", "Path to write a summary file to")
-	pattern     *regexp.Regexp
-	runner      *Runner
-	stdout      = os.Stdout
-	silentOut   *os.File
-	beforeEach  = make([]func(), 0, 2)
-	endTestErr  = new(error)
+	showStdout     = flag.Bool("vv", false, "turn on stdout")
+	matchFlag      = flag.String("m", "", "Regular expression selecting which tests to run")
+	summaryPath    = flag.String("summary", "", "Path to write a summary file to")
+	pattern        *regexp.Regexp
+	runner         *Runner
+	stdout         = os.Stdout
+	silentOut      *os.File
+	beforeEach     = make([]func(), 0, 2)
+	endTestErr     = new(error)
+	summaryPattern = regexp.MustCompile(`(?s)(\d+) passed.*?(\d+) failed`)
 )
 
 func init() {
@@ -134,39 +134,18 @@ func finish(t *testing.T) {
 		t.Fail()
 	}
 	if path := *summaryPath; len(path) != 0 {
-		updatePersistedSummary(path, passed, failed)
+		updatePersistedSummary(path, passed)
 	}
 }
 
-func updatePersistedSummary(path string, passed int, failed int) {
-	file, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0600)
+func updatePersistedSummary(path string, passed int) {
+	file, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0600)
 	if err != nil {
 		panic(err)
 	}
-	defer file.Close()
-	buffer := make([]byte, 128)
-	n, err := file.Read(buffer)
-	if err != nil && err != io.EOF {
-		panic(err)
-	} else if n > 0 {
-		file.Truncate(0)
-		found := regexp.MustCompile(`(\d+) passed\s*(\d+) failed`).FindAllStringSubmatch(string(buffer), 2)
-		if len(found) == 1 && len(found[0]) == 3 {
-			if p, err := strconv.Atoi(found[0][1]); err == nil {
-				passed += p
-			}
-			if f, err := strconv.Atoi(found[0][2]); err == nil {
-				failed += f
-			}
-		}
-	}
-
-	color.Fprintf(file, "\n* @g%d passed\n", passed)
-	if failed > 0 {
-		color.Fprintf(file, "* @r%d failed\n", passed)
-	} else {
-		file.Write([]byte("* 0 failed\n"))
-	}
+	file.Write([]byte(strconv.Itoa(passed)))
+	file.Write([]byte{'\n'})
+	file.Close()
 }
 
 func BeforeEach(f func()) {

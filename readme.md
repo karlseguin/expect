@@ -209,7 +209,7 @@ What we can do is use the `-summary <PATH>` flag and provide a path where summar
       go test ./... -summary $(TEMPFILE)
       @if [ -a $(TEMPFILE) ] ; \
       then \
-        cat $(TEMPFILE); rm $(TEMPFILE) ;\
+        awk '{s+=$$1} END {print "\033[1;32m", s, "passed"}' $(TEMPFILE); rm $(TEMPFILE) ;\
       fi;
 
 # Mocks
