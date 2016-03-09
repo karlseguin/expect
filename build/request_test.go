@@ -2,10 +2,11 @@ package build
 
 import (
 	"compress/gzip"
-	e "gopkg.in/karlseguin/expect.v1"
 	"io"
 	"net/http"
 	"testing"
+
+	e "github.com/karlseguin/expect"
 )
 
 type RequestTests struct{}
