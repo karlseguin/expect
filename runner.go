@@ -18,8 +18,10 @@ import (
 var (
 	showStdout     = flag.Bool("vv", false, "turn on stdout")
 	matchFlag      = flag.String("m", "", "Regular expression selecting which tests to run")
+	notMatchFlag   = flag.String("M", "", "Regular expression selecting which tests not to run")
 	summaryPath    = flag.String("summary", "", "Path to write a summary file to")
 	pattern        *regexp.Regexp
+	notPattern     *regexp.Regexp
 	runner         *Runner
 	stdout         = os.Stdout
 	silentOut      *os.File
@@ -32,6 +34,9 @@ func init() {
 	flag.Parse()
 	if len(*matchFlag) != 0 {
 		pattern = regexp.MustCompile("(?i)" + *matchFlag)
+	}
+	if len(*notMatchFlag) != 0 {
+		notPattern = regexp.MustCompile("(?i)" + *notMatchFlag)
 	}
 	if *showStdout == true {
 		silentOut = stdout
@@ -84,7 +89,10 @@ func Expectify(suite interface{}, t *testing.T) {
 			continue
 		}
 
-		if pattern != nil && pattern.MatchString(name) == false && pattern.MatchString(typeName) == false {
+		if pattern != nil && !pattern.MatchString(name) && !pattern.MatchString(typeName) {
+			continue
+		}
+		if notPattern != nil && (notPattern.MatchString(name) || notPattern.MatchString(typeName)) {
 			continue
 		}
 
