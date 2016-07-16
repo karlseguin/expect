@@ -31,6 +31,8 @@ var (
 )
 
 func init() {
+	os.Setenv("GO_TEST", "true")
+
 	flag.Parse()
 	if len(*matchFlag) != 0 {
 		pattern = regexp.MustCompile("(?i)" + *matchFlag)
