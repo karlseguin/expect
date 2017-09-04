@@ -162,7 +162,7 @@ func (ct *CalculatorTests) n() *Calculator {
 }
 ```
 
-Futhermore, when you setup the runner, you can setup code to before or after running tests (once for all tests, not once per test):
+Furthermore, when you setup the runner, you can setup code to before or after running tests (once for all tests, not once per test):
 
 ```go
 func Test_Caculator(t *testing.T) {
