@@ -9,6 +9,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -16,6 +17,8 @@ import (
 )
 
 var (
+	loaded         = false
+	loadLock       = new(sync.Mutex)
 	showStdout     = flag.Bool("vv", false, "turn on stdout")
 	matchFlag      = flag.String("m", "", "Regular expression selecting which tests to run")
 	notMatchFlag   = flag.String("M", "", "Regular expression selecting which tests not to run")
@@ -32,21 +35,25 @@ var (
 
 func init() {
 	os.Setenv("GO_TEST", "true")
-
-	flag.Parse()
-	if len(*matchFlag) != 0 {
-		pattern = regexp.MustCompile("(?i)" + *matchFlag)
-	}
-	if len(*notMatchFlag) != 0 {
-		notPattern = regexp.MustCompile("(?i)" + *notMatchFlag)
-	}
-	if *showStdout == true {
-		silentOut = stdout
-	}
-	os.Stdout = silentOut
 }
 
 func Expectify(suite interface{}, t *testing.T) {
+	loadLock.Lock()
+	if !loaded {
+		flag.Parse()
+		if len(*matchFlag) != 0 {
+			pattern = regexp.MustCompile("(?i)" + *matchFlag)
+		}
+		if len(*notMatchFlag) != 0 {
+			notPattern = regexp.MustCompile("(?i)" + *notMatchFlag)
+		}
+		if *showStdout == true {
+			silentOut = stdout
+		}
+		os.Stdout = silentOut
+	}
+	loadLock.Unlock()
+
 	var name string
 	var res *result
 	defer func() {

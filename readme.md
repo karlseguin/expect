@@ -61,7 +61,7 @@ All expectations can be reversed by starting the chain with `Not.`:
 * `Not.GreaterOrEqual.To(x)` or `Not.GreaterOrEqualTo(x)`
 * `Not.Less.Than(x)` or `Not.LessThan(x)`
 * `Not.LessOrEqual.To(x)` or `Not.LessOrEqualTo(x)`
-
+verbose
 ### Eql
 
 The `Equal` method is strict. This will fail:
@@ -137,7 +137,7 @@ Expect(1, true, "a").To.Equal(1, true, "a")
 
 ## stdout
 
-Go's testing package has no hooks into its reporting. `Expect` takes the drastic step of occasionally silencing `os.Stdout`, which many packages uses (such as `fmt.Print`). However, within your test, `os.Stdout` **will** work.
+Go's testing package has no hooks into its reporting. `Expect` takes the drastic step of occasionally silencing `os.Stdout`, which many packages use (such as `fmt.Print`). However, within your test, `os.Stdout` **will** work.
 
 If you print anything outside of your test, say during `init`, it'll likely be silenced by `Expect`. You can disable this behavior with the `-vv` flag (use `-v` and `-vv` in combination to change the behavior of both `Expect` and Go's library)
 
