@@ -51,6 +51,7 @@ func Expectify(suite interface{}, t *testing.T) {
 			silentOut = stdout
 		}
 		os.Stdout = silentOut
+		loaded = true
 	}
 	loadLock.Unlock()
 
