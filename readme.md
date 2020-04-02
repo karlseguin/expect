@@ -123,16 +123,19 @@ Expect(res.Code).To.Equal(404).Message("Expected %d got %d")
 
 ## Multiple Values
 
-`Expect` throws away all but the first value. This is convenient when a method returns an error which you don't care to test:
+`Expect` will only compare the number of values expected. This is useful for ignoring nil errors:
 
 ```go
 Expect(ioutil.ReadFile("blah")).To.Equal([]byte{1, 2, 3, 4})
 ```
 
-However, using `To.Equal` multiple values can be provided:
+Multiple expected values can be provided and they'll be compared to the corresponding value:
 
 ```go
+Expect(1, true, "a").To.Equal(1, true)
 Expect(1, true, "a").To.Equal(1, true, "a")
+
+Expect(1, true, "a").To.Equal(1, true, "a", "NOPE") // will fail
 ```
 
 ## stdout

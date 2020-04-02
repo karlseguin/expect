@@ -110,7 +110,7 @@ func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) PostH
 	assertion.invert = e.invert
 	failed := !equal(assertion, e.actual, expected)
 
-	if len(others) != len(e.others) {
+	if len(others) > len(e.others) {
 		Errorf("mismatch number of values and expectations %d != %d", len(e.others)+1, len(others)+1)
 		failed = true
 	} else {
@@ -128,7 +128,7 @@ func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) PostH
 }
 
 func (e *ToExpectation) Eql(expected interface{}, others ...interface{}) PostHandler {
-	if len(others) == len(e.others) {
+	if len(others) <= len(e.others) {
 		expected = coerce(e.actual, expected)
 		for i := 0; i < len(others); i++ {
 			others[i] = coerce(e.others[i], others[i])
@@ -331,7 +331,8 @@ func convertFromJson(value interface{}) string {
 func coerce(actual interface{}, expected interface{}) interface{} {
 	at := reflect.TypeOf(actual)
 	et := reflect.TypeOf(expected)
-	if et.ConvertibleTo(at) {
+
+	if et != nil && et.ConvertibleTo(at) {
 		return reflect.ValueOf(expected).Convert(at).Interface()
 	}
 	return expected

@@ -113,12 +113,11 @@ func (_ ExpectTests) Contain_Failures() {
 
 func (_ ExpectTests) ExpectMulipleValues_Success() {
 	Expect(1, true, "over 9000").To.Equal(1, true, "over 9000")
+	Expect([]byte("123"), nil).To.Equal([]byte("123"))
+	Expect([]byte("123"), nil).To.Eql("123")
 }
 
 func (_ ExpectTests) ExpectMulipleValues_Failure() {
-	failing("mismatch number of values and expectations 3 != 2", 1, func() {
-		Expect(1, true, "over 9000").To.Equal(1, true)
-	})
 	failing("mismatch number of values and expectations 2 != 3", 1, func() {
 		Expect(1, true).To.Equal(1, true, "a")
 	})
