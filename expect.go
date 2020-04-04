@@ -129,9 +129,9 @@ func (e *ToExpectation) Equal(expected interface{}, others ...interface{}) PostH
 
 func (e *ToExpectation) Eql(expected interface{}, others ...interface{}) PostHandler {
 	if len(others) <= len(e.others) {
-		expected = coerce(e.actual, expected)
+		e.actual, expected = coerce(e.actual, expected)
 		for i := 0; i < len(others); i++ {
-			others[i] = coerce(e.others[i], others[i])
+			e.others[i], others[i] = coerce(e.others[i], others[i])
 		}
 	}
 
@@ -328,12 +328,26 @@ func convertFromJson(value interface{}) string {
 	return string(bytes)
 }
 
-func coerce(actual interface{}, expected interface{}) interface{} {
+func coerce(actual interface{}, expected interface{}) (interface{}, interface{}) {
 	at := reflect.TypeOf(actual)
 	et := reflect.TypeOf(expected)
 
-	if et != nil && et.ConvertibleTo(at) {
-		return reflect.ValueOf(expected).Convert(at).Interface()
+	if et == nil {
+		return actual, expected
 	}
-	return expected
+
+	if et.ConvertibleTo(at) {
+		return actual, reflect.ValueOf(expected).Convert(at).Interface()
+	}
+
+	if et.String() == "string" {
+		if error, ok := actual.(interface{ Error() string }); ok {
+			return error.Error(), expected
+		}
+		if stringer, ok := actual.(interface{ String() string }); ok {
+			return stringer.String(), expected
+		}
+	}
+
+	return actual, expected
 }

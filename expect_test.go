@@ -1,6 +1,7 @@
 package expect
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 )
@@ -216,6 +217,13 @@ func (_ ExpectTests) EqlForInts() {
 func (_ ExpectTests) EqlForStringAndBytes() {
 	Expect([]byte{65, 66}).To.Eql("AB")
 	Expect("CD").To.Eql([]byte{67, 68})
+}
+
+func (_ ExpectTests) EqlForStringAndError() {
+	Expect(errors.New("an error")).To.Eql("an error")
+	failing("expected \"an error\" to be equal to \"123\"", 1, func() {
+		Expect(errors.New("an error")).To.Eql("123")
+	})
 }
 
 func failing(expected string, count int, f func()) {
