@@ -332,7 +332,7 @@ func coerce(actual interface{}, expected interface{}) (interface{}, interface{})
 	at := reflect.TypeOf(actual)
 	et := reflect.TypeOf(expected)
 
-	if et == nil {
+	if et == nil || at == nil {
 		return actual, expected
 	}
 

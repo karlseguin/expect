@@ -221,8 +221,13 @@ func (_ ExpectTests) EqlForStringAndBytes() {
 
 func (_ ExpectTests) EqlForStringAndError() {
 	Expect(errors.New("an error")).To.Eql("an error")
+
 	failing("expected \"an error\" to be equal to \"123\"", 1, func() {
 		Expect(errors.New("an error")).To.Eql("123")
+	})
+
+	failing("expected <nil> to be equal to 123", 1, func() {
+		Expect(nil).To.Eql("123")
 	})
 }
 
