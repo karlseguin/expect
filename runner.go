@@ -200,27 +200,32 @@ func (r *Runner) Skip(format string, args ...interface{}) {
 }
 
 func (r *Runner) Errorf(format string, args ...interface{}) {
-	file := "???"
-	line := 1
-	ok := false
-	for i := 3; i < 10; i++ {
-		_, file, line, ok = runtime.Caller(i)
-		if ok == false || strings.HasSuffix(file, "_test.go") {
+	collecting := false
+	stacks := make([]string, 0, 5)
+
+	for i := 0; i < 20; i++ {
+		_, file, line, ok := runtime.Caller(i)
+		if ok == false {
 			break
 		}
-	}
 
-	if ok {
-		if index := strings.LastIndex(file, "/"); index >= 0 {
-			file = file[index+1:]
-		} else if index = strings.LastIndex(file, "\\"); index >= 0 {
-			file = file[index+1:]
+		isTest := strings.HasSuffix(file, "_test.go")
+		if collecting == false && isTest {
+			collecting = true
+		}
+
+		// we're no longer in the _test.go stack, stop collecting
+		if collecting == true && !isTest {
+			break
+		}
+		if collecting {
+			stacks = append(stacks, fmt.Sprintf("       %s:%d", file, line))
 		}
 	}
 
 	failure := &Failure{
 		message:  fmt.Sprintf(format, args...),
-		location: fmt.Sprintf("%s:%d", file, line),
+		location: strings.Join(stacks, "\n") + "\n",
 	}
 	r.current.failures = append(r.current.failures, failure)
 }
@@ -274,8 +279,8 @@ func (r *result) Report() {
 		color.Println(" @g✓", info)
 	} else {
 		color.Println(" @r×", info)
-		for _, failure := range r.failures {
-			color.Printf("    @.%-40s%s\n", failure.location, failure.message)
+		for i, failure := range r.failures {
+			color.Printf("    %d. %s\n@.%-40s\n", i+1, failure.message, failure.location)
 		}
 	}
 }
