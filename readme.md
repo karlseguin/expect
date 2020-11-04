@@ -206,14 +206,16 @@ a brief summary beyond what Go's test runner provides (I always worry that every
 What we can do is use the `-summary <PATH>` flag and provide a path where summary data will be stored / updated. Therefore, even if multiple processes are launched, and even if we can't output to stdout, with a bit of work invoking the tests, we can get a summary. For example, I recommend a simple Makefile:
 
 ```Makefile
-    TEMPFILE := $(shell mktemp -u -t testsummary)
+TMPDIR := $(shell dirname $(shell mktemp -u))
+TEST_SUMMARY := $(TMPDIR)/$$(go list).go.summary
 
-    test:
-      go test ./... -summary $(TEMPFILE)
-      @if [ -a $(TEMPFILE) ] ; \
-      then \
-        awk '{s+=$$1} END {print "\033[1;32m", s, "passed"}' $(TEMPFILE); rm $(TEMPFILE) ;\
-      fi;
+test:
+  go test ./... -summary $(TEST_SUMMARY)
+  @if [ -a $(TEST_SUMMARY) ] ; \
+  then \
+    awk '{s+=$$1} END {print "\033[1;32m", s, "passed"}' $(TEST_SUMMARY); rm $(TEST_SUMMARY) ;\
+  fi;
+```
 
 # Mocks
 
