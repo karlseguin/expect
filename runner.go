@@ -20,6 +20,7 @@ var (
 	loaded         = false
 	loadLock       = new(sync.Mutex)
 	showStdout     = flag.Bool("vv", false, "turn on stdout")
+	exitOnFailure  = flag.Bool("e", false, "exit on failures")
 	matchFlag      = flag.String("m", "", "Regular expression selecting which tests to run")
 	notMatchFlag   = flag.String("M", "", "Regular expression selecting which tests not to run")
 	summaryPath    = flag.String("summary", "", "Path to write a summary file to")
@@ -52,6 +53,18 @@ func Expectify(suite interface{}, t *testing.T) {
 		}
 		os.Stdout = silentOut
 		loaded = true
+
+		if *exitOnFailure {
+			FailureHandlerFactory = func(actual, expected interface{}) PostHandler {
+				for _, res := range runner.results {
+					if !res.Passed() || testing.Verbose() {
+						res.Report()
+					}
+				}
+				os.Exit(1)
+				return nil
+			}
+		}
 	}
 	loadLock.Unlock()
 

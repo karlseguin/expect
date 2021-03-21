@@ -44,6 +44,9 @@ Run tests as you normally would via `go test`. However, to run specific tests, u
 
     go test -m AddsTwo
 
+### Exit On Error
+Use the -e flag to exit on a failed assertion.
+
 ## Expectations
 
 Two similar syntaxes of expectations are supported

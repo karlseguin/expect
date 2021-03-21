@@ -6,7 +6,10 @@ import (
 )
 
 var (
-	SuccessHandler = &SuccessPostHandler{}
+	SuccessHandler        = &SuccessPostHandler{}
+	FailureHandlerFactory = func(expected, actual interface{}) PostHandler {
+		return &FailurePostHandler{expected, actual}
+	}
 )
 
 type PostHandler interface {
@@ -19,7 +22,7 @@ type FailurePostHandler struct {
 }
 
 func NewFailureHandler(expected, actual interface{}) PostHandler {
-	return &FailurePostHandler{expected, actual}
+	return FailureHandlerFactory(expected, actual)
 }
 
 func (h *FailurePostHandler) Message(format string, args ...interface{}) {
